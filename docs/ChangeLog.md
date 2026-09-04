@@ -149,5 +149,16 @@ any warning as well as any error (Operating Rule 5).
 
 ---
 
+## Batch 2 — Tables, UI pages, permission sets (2026-09-04)
+
+**Objects (16):** tables 80303–80306; pages 80307–80314; ListParts 80320–80321; permission sets 80338–80339.
+**Deviation from TDD §7/§8.1/§9:** none — generated verbatim from spec, in the dependency order from BuildPlan §2 (ListParts → Cards → Lists, tables before their referencing pages, permission sets last).
+**Verification:** `scripts/preflight.py src/Tables src/Pages src/PermissionSets` → 0 failures. `scripts/build.sh` (full project, 19 files) → 0 errors, 0 warnings, 4 info.
+**Info accepted, not a defect:** `AW0006` on all four Card pages (80308, 80310, 80312, 80314) — Cards are reached via their List page; adding `UsageCategory` would place four cards in Tell-Me. Pre-accepted at Step 04, SanityCheck SC-07.
+**Files:** `src/Tables/*.al` (4), `src/Pages/*.al` (10), `src/PermissionSets/*.al` (2).
+**ObjectRegister:** 16 objects marked Built.
+
+---
+
 ## Batch deviations
 *(none yet — BUILD not started)*

@@ -1,0 +1,94 @@
+namespace DSW.IPTracking;
+
+page 80314 "ipt IP Entitlement Card"
+{
+    PageType = Card;
+    ApplicationArea = All;
+    SourceTable = "ipt IP Entitlement";
+    Caption = 'IP Entitlement Card';
+
+    layout
+    {
+        area(Content)
+        {
+            group(General)
+            {
+                field("Entry No."; Rec."Entry No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the unique entry number of this entitlement.';
+                }
+                field("Customer No."; Rec."Customer No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the number of the customer who holds this entitlement.';
+                }
+                field("Customer Name"; Rec."Customer Name")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the name of the customer who holds this entitlement.';
+                }
+            }
+            group(Product)
+            {
+                Caption = 'Product';
+
+                field("IP App Code"; Rec."IP App Code")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the code that identifies the IP app the customer is entitled to.';
+                }
+                field("Edition Code"; Rec."Edition Code")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the code that identifies the edition the customer is entitled to.';
+                }
+                field("Description"; Rec."Description")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the description of the edition.';
+                }
+                field("License Type"; Rec."License Type")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the license type of the IP app.';
+                }
+            }
+            group(Terms)
+            {
+                Caption = 'Terms';
+
+                field("Status"; Rec."Status")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the status of this entitlement.';
+                }
+                field("Billing Period"; Rec."Billing Period")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the billing period of this entitlement.';
+                }
+                field("Quantity"; Rec."Quantity")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the quantity held under this entitlement.';
+                }
+                field("Date of Purchase"; Rec."Date of Purchase")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the date the customer purchased this entitlement.';
+                }
+                field("Expiration Date"; Rec."Expiration Date")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the date this entitlement expires. Suggested automatically from the date of purchase and billing period; editable.';
+                }
+                field("Unit Price"; Rec."Unit Price")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the unit price for this app, edition, billing period and currency (LCY).';
+                }
+            }
+        }
+    }
+}
