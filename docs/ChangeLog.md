@@ -198,5 +198,29 @@ code; no scope creep, no undisclosed deviation.
 
 ---
 
+## Step 09 (partial) — Package the app
+
+Completed 2026-09-04. Deliverable: `docs/Packaging.md`. Scope: the "build the .app package"
+action of Step 09 only — publish, green-team and red-team tests need a live BC tenant and are
+still open.
+
+`app.json` identity/runtime/dependencies re-confirmed against TDD §1 Parameter block — exact
+match on every field. `./scripts/build.sh` → 0 errors, 0 warnings, 4 info (unchanged, pre-accepted
+AW0006). Opened `out/app.app` and read its **compiled** `SymbolReference.json` and
+`NavxManifest.xml` directly — 23 objects (4 tables, 14 pages, 3 enums, 2 permission sets) and
+identity fields both match, confirming what ships is what was built, not just what's on disk.
+
+**Observation (not a defect):** embedded source inside the package sits under a doubled
+`src/src/...` path — the project's own top-level folder is named `src`, and
+`includeSourceInSymbolFile` prefixes embedded source with `src/` again. Cosmetic only. Flagged
+because `includeSourceInSymbolFile`/`allowDebugging`/`allowDownloadingSource = true` (inherited
+from the Step 05 scaffold, never revisited) should be a deliberate choice before shipping to
+production, not a carried-over default — appropriate for an internal PTE, but worth confirming.
+
+**Files affected:** none (no code change; verification only).
+**Updated:** neither TDD nor FRD.
+
+---
+
 ## Batch deviations
 *(none yet — BUILD not started)*
