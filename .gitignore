@@ -1,0 +1,13 @@
+# BC symbol packages — restored via "AL: Download Symbols", not version-controlled
+.alpackages/
+
+# AL build output
+out/
+*.app
+
+# Symbol cache rebuilt from .alpackages by scripts/preflight.py
+scripts/.symbolcache.json
+
+# Local artifacts
+.snapshots/
+.DS_Store
