@@ -160,5 +160,15 @@ any warning as well as any error (Operating Rule 5).
 
 ---
 
+## Batch 3 — API pages (2026-09-04)
+
+**Objects (4):** 80315 IP App API, 80316 IP App Edition API, 80317 IP App Price API, 80318 IP Entitlement API.
+**Deviation from TDD §8.2:** none — generated verbatim from the field identifier map.
+**Verification:** `scripts/preflight.py src/API` → 0 failures. `scripts/build.sh` (full project, 23 files) → 0 errors, 0 warnings, 4 info (same accepted `AW0006` as Batch 2 — API pages themselves raised none).
+**Files:** `src/API/*.al` (4).
+**ObjectRegister:** all 23 objects now marked Built. **BUILD phase complete.**
+
+---
+
 ## Batch deviations
 *(none yet — BUILD not started)*

@@ -19,10 +19,10 @@ Allocated range: **80300–80339**. Never allocate outside it.
 | 80312 | page (Card) | ipt IP App Price Card | IP Tracking | ipt IP App Price | R/W | 2 | Built |
 | 80313 | page (List) | ipt IP Entitlements | IP Tracking | ipt IP Entitlement | R/W | 2 | Built |
 | 80314 | page (Card) | ipt IP Entitlement Card | IP Tracking | ipt IP Entitlement | R/W | 2 | Built |
-| 80315 | page (API) | ipt IP App API | IP Tracking | ipt IP App | R/W | 3 | Planned |
-| 80316 | page (API) | ipt IP App Edition API | IP Tracking | ipt IP App Edition | R/W | 3 | Planned |
-| 80317 | page (API) | ipt IP App Price API | IP Tracking | ipt IP App Price | R/W | 3 | Planned |
-| 80318 | page (API) | ipt IP Entitlement API | IP Tracking | ipt IP Entitlement | R/W | 3 | Planned |
+| 80315 | page (API) | ipt IP App API | IP Tracking | ipt IP App | R/W | 3 | Built |
+| 80316 | page (API) | ipt IP App Edition API | IP Tracking | ipt IP App Edition | R/W | 3 | Built |
+| 80317 | page (API) | ipt IP App Price API | IP Tracking | ipt IP App Price | R/W | 3 | Built |
+| 80318 | page (API) | ipt IP Entitlement API | IP Tracking | ipt IP Entitlement | R/W | 3 | Built |
 | 80319 | — | *(free)* | | | | | Buffer |
 | 80320 | page (ListPart) | ipt IP App Editions Part | IP Tracking | ipt IP App Edition | R/W | 2 | Built |
 | 80321 | page (ListPart) | ipt IP App Prices Part | IP Tracking | ipt IP App Price | R/W | 2 | Built |
