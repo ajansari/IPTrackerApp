@@ -170,5 +170,33 @@ any warning as well as any error (Operating Rule 5).
 
 ---
 
+## Step 08 — Gap-Fit Test, Fidelity Validation
+
+Completed 2026-09-04. Deliverable: `docs/GapAnalysis.md`. Three-way comparison of FRD ⇄ TDD ⇄
+as-built, evidence pulled from the compiled source on disk (not recalled from memory of
+generating it): all 23 objects, every field count, every OnDelete guard, the R-1 rule wiring,
+all 5 FlowFields' `Editable = false`, every List/Card/Part column set, every API field identifier
+map, and both permission sets' grants were extracted with `grep` and checked line-for-line
+against TDD §7–§9. Full project recompiled at the end to rule out drift: 0 errors, 0 warnings,
+4 info (unchanged from Batch 3).
+
+**Result: 1 gap, classified Intentional.**
+
+## Issue 08-01 — Consumer permission documentation (FRD §7.6) not yet published
+**Problem:** FRD §7.6 states documentation should list the base `D365 BASIC` + Customer read
+permissions API/BI consumers need beyond the app's own permission sets. No such document exists.
+**Root cause:** Deliberately deferred, not missed — flagged at Step 04 sign-off (SanityCheck
+SC-14) as a Step 12 deliverable (`Deployment.md`), because Step 12 is where all consumer-facing
+documentation is produced together.
+**Resolution:** No action at Step 08. TDD §9 already carries the substance of the guidance;
+`Deployment.md` at Step 12 will publish it as its own document.
+**Files affected:** none yet — tracked for `docs/Deployment.md`.
+**Updated:** neither TDD nor FRD — this is a documentation deliverable, not a design change.
+
+**No other gap found.** Every FRD entity, TDD rule and property traced cleanly to the as-built
+code; no scope creep, no undisclosed deviation.
+
+---
+
 ## Batch deviations
 *(none yet — BUILD not started)*
