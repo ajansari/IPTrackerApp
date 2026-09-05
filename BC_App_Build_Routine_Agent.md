@@ -370,7 +370,7 @@ Run these in parallel with the phased work — they are not a final step.
 
 ## Document
 
-- Keep every required project document current as work proceeds, not retroactively (Standards §2.1): `ProblemStatement`, `FRD`, `TDD`, `SanityCheck`, `PostDevTDD`, `ChangeLog`, `GapAnalysis` / `CodeReview`, `Documentation`.
+- Keep every required project document current as work proceeds, not retroactively (Standards §2.1): `ProblemStatement`, `FRD`, `TDD`, `SanityCheck`, `PostDevTDD`, `ChangeLog`, `GapAnalysis` / `CodeReview`, `Documentation`, `TestingFeedback`, `Roadmap`, `ProjectMemory`.
 - Maintain the **Object Register** as a standalone artifact — every object, its ID, module, source table, and R/W status — updated as objects are planned and built (Standards §1.2).
 
 ## Track Changes — the ChangeLog
@@ -408,18 +408,24 @@ what the human actually said before it becomes a summary of what the human said.
   Issue(s) or Roadmap item(s) it produced, so the raw ask and the eventual decision both remain
   traceable independently.
 
-## Session Memory (when the executing agent has one)
+## Project Memory — `docs/ProjectMemory.md` (required, in-repo)
 
-If the agent running this routine has a persistent, cross-session memory capability, use it as a
-continuity aid — never as a source of truth:
+Continuity must not depend on which agent, machine, or tool picks the project up next.
+`docs/ProjectMemory.md` is a required project artifact, committed to version control like every
+other document here — **not** an agent's own external/cross-session memory feature, which is
+tied to one machine's file path and invisible to git, to a teammate, and to any other tool or
+agent that opens this repo.
 
-- Maintain one memory entry per project anchoring: current phase/step, the live document set and
-  where each one lives, and any decision awaiting human sign-off.
+- **Keep it short — an anchor, not a narrative.** Current phase/step, where each live document
+  lives, any decision awaiting human sign-off, and a one-line pointer per past milestone. The
+  full story of *why* a decision was made belongs in `ChangeLog.md`; `ProjectMemory.md` just
+  says *where to look*. If it starts reading like a second ChangeLog, trim it.
 - Update it at the close of every step or batch — the same moment the ChangeLog gets its entry.
-- The project's own documents (`TDD`, `FRD`, `ChangeLog`, `ObjectRegister`, `TestingFeedback`,
-  `Roadmap`) remain authoritative. Memory only saves a fresh session from re-deriving context
-  that is already written down; a fact that lives only in memory and nowhere in the documents
-  does not count as recorded.
+- If the executing agent *also* has its own persistent cross-session memory capability, that
+  memory may point at `docs/ProjectMemory.md` (e.g. "always read this file first") but must not
+  duplicate its content. A fact that lives only in an agent's private memory and nowhere in
+  `docs/ProjectMemory.md` or the other project documents does not count as recorded — the file
+  in the repo is the one a different agent, a teammate, or a fresh clone can actually read.
 
 ---
 

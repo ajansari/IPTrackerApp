@@ -365,6 +365,28 @@ rather than only in this project's docs:
 No ChangeLog issue number — these aren't a deviation from this app's FRD/TDD, they're a process
 improvement to the framework all future apps built with it will inherit.
 
+## Framework addition (2026-09-05, second pass) — Project Memory made prescriptive and in-repo
+
+Verified (grepped, not recalled) that the previous session's "Session Memory" section did *not*
+actually require a file named `Memory.md`, or any specific in-repo file — it only said "if the
+agent has a persistent memory capability, use it," which meant a future project's continuity
+depended on whichever agent happened to run it, and lived outside the repo entirely (Claude
+Code's own memory store, keyed to one machine's file path — invisible to git, a teammate, or any
+other tool that opens the repo).
+
+**Resolution:** rewrote the section as **"Project Memory — `docs/ProjectMemory.md` (required,
+in-repo)"** — a committed, version-controlled artifact, not conditional on the executing agent's
+own memory feature. Deliberately scoped as a short *anchor* (current phase, live-document
+pointers, open decisions, one line per milestone), not a narrative — the "why" stays in
+`ChangeLog.md`; duplicating it in a second document would create drift between two sources of
+truth. An agent's own external memory (if any) may point at this file but must not duplicate it.
+Also added `TestingFeedback`, `Roadmap` and `ProjectMemory` to the Operating Rules' canonical
+required-documents list, which had never been updated when those two were created.
+
+**Files affected:** `docs/ProjectMemory.md` (new, this project's own copy — see the file for
+current state); Claude Code's own external memory note trimmed to a pointer, per the new rule.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
+
 ---
 
 ## Batch deviations
