@@ -68,5 +68,19 @@ changes — pure rename.
 
 ---
 
+## R-4 — License Key Generator
+
+**Source:** Testing session 2026-09-05 (`TestingFeedback.md`), same round that added the
+"License Key" field to `ocpf IP Entitlement` (09F-14).
+
+**Idea:** Generate a license key for an entitlement, rather than requiring it to be entered
+manually into the new "License Key" field. Details to be decided later — algorithm, format,
+whether it's triggered automatically (e.g. on Status → Active) or on demand, uniqueness/
+collision handling, and whether it needs to validate against anything external.
+
+**Status:** Idea only. Not designed, not scheduled.
+
+---
+
 *(Add new items above this line as they come up. Each entry: source, idea, open questions,
 status.)*

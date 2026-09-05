@@ -444,6 +444,7 @@ verified against the Business Foundation symbols, not assumed.
 | 11 | "Expiration Date" | Date | user-editable; default per R-1 |
 | 12 | "License Type" | Enum "ocpf IP License Type" | FlowField `lookup("ocpf IP App"."License Type" where("Code" = field("IP App Code")))`; `Editable = false` |
 | 13 | "Unit Price" | Decimal | **Not a FlowField (changed 2026-09-05, 09F-11).** Real stored field, `MinValue = 0`; suggested via rule R-4 (below) on `OnValidate` of IP App Code, Edition Code, Billing Period; user-editable, never overwritten once non-zero |
+| 14 | "License Key" | Text[80] | New 2026-09-05, 09F-14. Plain field, no validation, no default. Not shown on the List (grid exposure of license keys wasn't wanted); shown on the Card and the API |
 
 Keys:
 `key(PK; "No.") { Clustered = true; }`
@@ -497,6 +498,30 @@ sentinel, so a deliberately-entered `0` (e.g. a Gratis entitlement) is indisting
 afterward. Accepted as a minor, documented limitation rather than adding a separate
 "has the user touched this" flag for a single field.
 
+**Rule R-5 (default a new record's key field from the page's active filter — new 2026-09-05,
+09F-13):** on page 80313 "ocpf IP Entitlements":
+```al
+trigger OnNewRecord(BelowxRec: Boolean)
+var
+    IPAppCodeFilter: Text;
+    CustomerNoFilter: Text;
+begin
+    IPAppCodeFilter := Rec.GetFilter("IP App Code");
+    if IPAppCodeFilter <> '' then
+        Rec.Validate("IP App Code", CopyStr(IPAppCodeFilter, 1, MaxStrLen(Rec."IP App Code")));
+
+    CustomerNoFilter := Rec.GetFilter("Customer No.");
+    if CustomerNoFilter <> '' then
+        Rec.Validate("Customer No.", CopyStr(CustomerNoFilter, 1, MaxStrLen(Rec."Customer No.")));
+end;
+```
+**Defect fixed:** creating a new Entitlement from either cross-reference action (80307/80308's
+"Entitlements", or the Customer pageextensions' "IP Entitlements" — both `RunPageLink` a single
+field into this same List page, §8.3) produced a record that didn't carry the filtered value, so
+the new record fell **outside** the very filter it was created under and appeared to vanish/fail.
+`RunPageLink` filters the page; it does not by itself default a new record's field. One trigger
+on the shared target page fixes both entry points, since both funnel through it.
+
 ---
 
 ## 8. Page specs
@@ -511,8 +536,8 @@ afterward. Accepted as a minor, documented limitation rather than adding a separ
 | 80310 | "ocpf IP App Edition Card" | Card | "ocpf IP App Edition" | `group(General)`: IP App Code, Edition Code, Description — **Unit Price field removed (09F-04)** |
 | 80311 | "ocpf IP App Prices" | List | "ocpf IP App Price" | Unchanged except rename. Columns: IP App Code, Edition Code, Billing Period, Currency Code, Unit Price |
 | 80312 | "ocpf IP App Price Card" | Card | "ocpf IP App Price" | Unchanged except rename. `group(General)`: all five fields |
-| 80313 | "ocpf IP Entitlements" | List | "ocpf IP Entitlement" | Columns: **No.** (was Entry No.; `Editable = false`), Customer No., Customer Name, IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price |
-| 80314 | "ocpf IP Entitlement Card" | Card | "ocpf IP Entitlement" | `group(General)`: **No.** (`Editable = false`), Customer No., Customer Name; `group(Product)`: IP App Code, Edition Code, Description, License Type; `group(Terms)`: Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price |
+| 80313 | "ocpf IP Entitlements" | List | "ocpf IP Entitlement" | Columns: **No.** (was Entry No.; `Editable = false`), Customer No., Customer Name, IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. **License Key deliberately not shown here** (09F-14). **`OnNewRecord` rule R-5 (09F-13)** defaults IP App Code/Customer No. from the page's active filter |
+| 80314 | "ocpf IP Entitlement Card" | Card | "ocpf IP Entitlement" | `group(General)`: **No.** (`Editable = false`), Customer No., Customer Name; `group(Product)`: IP App Code, Edition Code, Description, License Type; `group(Terms)`: Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price, **License Key** (09F-14) |
 | 80319 | *(table, not a page)* | | | |
 | 80320 | "ocpf IP App Editions Part" | ListPart | "ocpf IP App Edition" | Columns: Edition Code, Description — **Unit Price removed (09F-04)** |
 | 80321 | "ocpf IP App Prices Part" | ListPart | "ocpf IP App Price" | Unchanged except rename. Columns: Edition Code, Billing Period, Currency Code, Unit Price |
@@ -538,7 +563,7 @@ Field identifier map (camelCase; source field in quotes):
 
 **80317 IP App Price API:** `ipAppCode`←"IP App Code", `editionCode`←"Edition Code", `billingPeriod`←"Billing Period", `currencyCode`←"Currency Code", `unitPrice`←"Unit Price", `systemId`, `lastModifiedDateTime`.
 
-**80318 IP Entitlement API:** `no`←"No." (**was `entryNo`←"Entry No.", 09F-07**), `customerNo`←"Customer No.", `customerName`←"Customer Name", `ipAppCode`←"IP App Code", `editionCode`←"Edition Code", `description`←"Description", `dateOfPurchase`←"Date of Purchase", `status`←"Status", `billingPeriod`←"Billing Period", `quantity`←"Quantity", `expirationDate`←"Expiration Date", `licenseType`←"License Type", `unitPrice`←"Unit Price", `systemId`, `lastModifiedDateTime`.
+**80318 IP Entitlement API:** `no`←"No." (**was `entryNo`←"Entry No.", 09F-07**), `customerNo`←"Customer No.", `customerName`←"Customer Name", `ipAppCode`←"IP App Code", `editionCode`←"Edition Code", `description`←"Description", `dateOfPurchase`←"Date of Purchase", `status`←"Status", `billingPeriod`←"Billing Period", `quantity`←"Quantity", `expirationDate`←"Expiration Date", `licenseType`←"License Type", `unitPrice`←"Unit Price", `licenseKey`←"License Key" (**new, 09F-14**), `systemId`, `lastModifiedDateTime`.
 
 ### 8.3 Extension objects (new 2026-09-05, 09F-06 / 09F-08)
 

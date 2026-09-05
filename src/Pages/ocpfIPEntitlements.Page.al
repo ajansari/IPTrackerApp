@@ -74,4 +74,18 @@ page 80313 "ocpf IP Entitlements"
             }
         }
     }
+
+    trigger OnNewRecord(BelowxRec: Boolean)
+    var
+        IPAppCodeFilter: Text;
+        CustomerNoFilter: Text;
+    begin
+        IPAppCodeFilter := Rec.GetFilter("IP App Code");
+        if IPAppCodeFilter <> '' then
+            Rec.Validate("IP App Code", CopyStr(IPAppCodeFilter, 1, MaxStrLen(Rec."IP App Code")));
+
+        CustomerNoFilter := Rec.GetFilter("Customer No.");
+        if CustomerNoFilter <> '' then
+            Rec.Validate("Customer No.", CopyStr(CustomerNoFilter, 1, MaxStrLen(Rec."Customer No.")));
+    end;
 }

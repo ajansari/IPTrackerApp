@@ -104,6 +104,10 @@ table 80306 "ocpf IP Entitlement"
             Caption = 'Unit Price';
             MinValue = 0;
         }
+        field(14; "License Key"; Text[80])
+        {
+            Caption = 'License Key';
+        }
     }
 
     keys

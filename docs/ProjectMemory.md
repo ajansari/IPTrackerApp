@@ -53,6 +53,9 @@ raises or owns a decision.*
 - **Step 09 remainder** — publish to `v29Sandbox` and run green-team/red-team tests. Needs a
   live tenant; not done standalone. Also unresolved: whether `v29Sandbox` is actually BC v29,
   which would make the 28.4 symbols downlevel for it (SC-11). *(awaiting: AJ)*
+- **09F-14 table placement** — "License Key" (Text80) was placed on `ocpf IP Entitlement`
+  because the request didn't name a table; reasoned as the per-customer register, not the
+  catalog tables. Confirm this is right, or move it. *(awaiting: AJ)*
 
 ## Milestone log (one line each — full detail in `ChangeLog.md`)
 
@@ -86,6 +89,10 @@ raises or owns a decision.*
   Recovered by rebuilding from the exact prior source state, not a true undelete (`out/` isn't
   git-tracked; `rm` doesn't use Trash). Runbook gained an explicit "never delete a previous
   package" rule citing this incident.
+- 2026-09-05 — Second testing round (09F-13/09F-14): fixed a real defect (new Entitlement from
+  either cross-reference action fell outside its own filter — `RunPageLink` doesn't default new
+  records, only filters; fixed via `OnNewRecord`, rule R-5); added `"License Key"` (Text80) to
+  `ocpf IP Entitlement`; added Roadmap R-4 (License Key Generator, idea only).
 
 ## Next
 

@@ -76,6 +76,10 @@ page 80318 "ocpf IP Entitlement API"
                 {
                     Caption = 'Unit Price';
                 }
+                field(licenseKey; Rec."License Key")
+                {
+                    Caption = 'License Key';
+                }
                 field(systemId; Rec.SystemId)
                 {
                     Caption = 'System Id';

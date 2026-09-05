@@ -89,6 +89,11 @@ page 80314 "ocpf IP Entitlement Card"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the unit price. Suggested automatically from the price list (LCY) once App, Edition and Billing Period are set; editable.';
                 }
+                field("License Key"; Rec."License Key")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the license key issued for this entitlement.';
+                }
             }
         }
     }

@@ -493,6 +493,37 @@ same way Step 01's "ask, don't infer" rule cites the DSW/`ipt`→OnlyCopilotFans
 **Verification:** `scripts/build.sh` → both `out/IP_Tracking_1.0.0.0.app` and
 `out/IP_Tracking_1.1.0.0.app` present; 0 errors, 0 warnings.
 
+## Issue 09F-13 — New Entitlement from a cross-reference action fell outside its own filter
+
+**Problem:** Creating a new IP Entitlement from the "Entitlements" action on IP App List/Card
+(80307/80308) or the "IP Entitlements" action on Customer Card/List (pageextensions 80326/80327)
+failed — AJ's words: "what I was creating went outside the filtered view." The new record didn't
+inherit the field the target list was filtered on (IP App Code or Customer No.), so it fell
+outside that very filter and appeared to vanish.
+**Root cause:** `RunPageLink` filters the target page; it does not, by itself, default a new
+record's field to the filtered value. That default has to be set explicitly.
+**Resolution:** Rule R-5 (TDD §7.4) — `OnNewRecord` on page 80313 "ocpf IP Entitlements" reads
+`Rec.GetFilter` on both "IP App Code" and "Customer No." and applies whichever is active to the
+new record via `Validate`. One trigger on the shared target page fixes both entry points, since
+both cross-reference actions funnel through this same List page.
+**Files affected:** `src/Pages/ocpfIPEntitlements.Page.al`.
+**Updated:** TDD (§7.4, new rule R-5) and FRD (§7.4) — yes.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
+
+## Issue 09F-14 — New field: License Key (Text80)
+
+**Problem:** No field to record a license key against an entitlement.
+**Root cause:** New requirement; not previously scoped. Table wasn't specified in the request.
+**Resolution:** Added field 14 `"License Key"` (Text[80], plain, no validation/default) to
+`ocpf IP Entitlement` — reasoned to be the per-customer register, not the catalog tables
+(`IP App`/`IP App Edition`), matching how a license key is issued per purchase, not per product
+definition; also the natural attachment point for the License Key Generator idea (Roadmap R-4).
+Shown on the Card and the API; **deliberately not shown on the List** — a license key isn't
+grid-appropriate. Flagged for confirmation since the table wasn't specified in the request.
+**Files affected:** `src/Tables/ocpfIPEntitlement.Table.al`, `src/Pages/ocpfIPEntitlementCard.Page.al`, `src/API/ocpfIPEntitlementAPI.Page.al`.
+**Updated:** TDD (§7.4) and FRD (§7.4) — yes.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
+
 ---
 
 ## Batch deviations

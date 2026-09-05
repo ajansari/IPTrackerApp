@@ -103,6 +103,8 @@ also hosts an Editions ListPart and a Prices ListPart, plus an "Entitlements" na
 - `Date of Purchase` (Date). `Status` (enum #7). `Billing Period` (enum #6, **defaults blank**). `Quantity` (Decimal ≥ 0, default 1).
 - `Expiration Date` (Date) — suggested as Date of Purchase + 1M/1Y/3Y on validation of Date of Purchase or Billing Period; user-editable. Does not fire while Billing Period is blank. A lapsed entitlement is one whose Expiration Date is in the past (there is no "Expired" status value).
 - `License Type` (FlowField from IP App). `Unit Price` — **not a FlowField (changed 2026-09-05, 09F-11)**: a real, user-editable field auto-suggested from IP App Price (App + Edition + Billing Period + blank Currency) once all three are known, and never overwritten once it holds a non-zero value.
+- `License Key` (Text80, new 2026-09-05, 09F-14) — plain field, entered manually today. A generator for it is on the roadmap (R-4), details not yet decided.
+- **Defect fixed (09F-13):** creating a new Entitlement from the IP App or Customer cross-reference actions (§7.8) now presets the filtered field (IP App Code or Customer No.) on the new record — previously it didn't, so the new record fell outside the filter it was created under and appeared to fail.
 
 **Billing Period default ripple (explicit decision, 2026-09-05):** the blank default added for
 "Default Billing Period" (§7.1) is on a *shared* enum, so it also changed the default for this

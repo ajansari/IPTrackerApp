@@ -108,3 +108,28 @@ Issues 09F-09 (missing `using` on 4 page extensions) and 09F-10 (`Image = Entity
 | 3 | "What deletion controls should we have?" — enshrined? | Not previously in the runbook as a required consideration. Added as a Step 04 checklist item (generalizable). The *specific* open question for this app's newest objects (IP App Setup, Item tie) is a live design decision, not something to decide unilaterally — raised back to the human rather than assumed | Runbook §04 checklist; open question raised in this response |
 | 4 | Mermaid schema diagram requirement | Not previously in the runbook. Added to Step 12 | Runbook §12 |
 | 5 | "What is Remote Control?" | Answered directly (Claude Code product question, not a project item) | — |
+
+---
+
+## Session 2026-09-05 — second manual test pass, post-repackage (v1.1.0.0)
+
+**Tested by:** AJ Ansari. **Context:** testing round after the `IP_Tracking_1.1.0.0.app` repackage.
+
+### Raw feedback (verbatim)
+
+> When I tried to create an IP Entitlement from the IP App related lookup it failed because
+> what I was creating went outside the filtered view. I realized this was because it didn't
+> preset the IP App Code to the IP App record I had started this process from.
+>
+> Also, We need a TEXT80 field for License Key
+>
+> Also, for app roadmap we need to add an entry for License Key Generator - details to be
+> decided later
+
+### Triage
+
+| # | Item | Disposition | Tracking |
+|---|---|---|---|
+| 1 | New Entitlement from IP App's "Entitlements" action doesn't preset IP App Code, so the new record falls outside the RunPageLink filter | Real defect — implement now | ChangeLog Issue 09F-13 |
+| 2 | Add a Text[80] "License Key" field | Implement now — placed on `ocpf IP Entitlement` (per-customer register, not the catalog tables) as the best-reasoned home; flagged for confirmation since the table wasn't specified | ChangeLog Issue 09F-14 |
+| 3 | Roadmap: License Key Generator, details TBD | Done | `docs/Roadmap.md` item R-4 |
