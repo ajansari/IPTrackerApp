@@ -47,15 +47,15 @@ erDiagram
         Integer Edition_Count "FlowField"
     }
     ocpf_IP_App_Edition {
-        Code10 IP_App_Code PK_FK
+        Code10 IP_App_Code PK,FK
         Code10 Edition_Code PK
         Text80 Description
     }
     ocpf_IP_App_Price {
-        Code10 IP_App_Code PK_FK
-        Code10 Edition_Code PK_FK
+        Code10 IP_App_Code PK,FK
+        Code10 Edition_Code PK,FK
         Enum Billing_Period PK
-        Code10 Currency_Code PK_FK
+        Code10 Currency_Code PK,FK
         Decimal Unit_Price
     }
     ocpf_IP_Entitlement {

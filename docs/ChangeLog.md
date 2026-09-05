@@ -759,5 +759,28 @@ reference for developers, a different audience entirely. Caught by AJ, not by me
 
 ---
 
+## Issue 12-01 — The Mermaid schema diagram never rendered
+
+**Problem:** AJ asked whether the runbook required a Mermaid schema. It does (Step 12), and one
+*was* written into `Documentation.md` §2 — but on actually testing it, it failed to parse:
+`Parse error on line 24 … Expecting 'ATTRIBUTE_WORD', got 'ATTRIBUTE_KEY'`. It had never rendered
+anywhere.
+**Root cause:** four composite-key attributes were written as `PK_FK`. Mermaid's `erDiagram`
+accepts `PK`, `FK`, `UK`, or comma-separated (`PK,FK`) — `PK_FK` is not a valid token. The deeper
+cause is process, not syntax: the diagram was written and shipped **without ever being rendered**.
+Markdown stores an invalid diagram happily — it looks correct in the source and only fails at the
+point someone views it — so nothing in the build, the pre-flight, or the compile could catch it.
+I had even flagged "haven't seen it rendered" in the Step 12 handover and then did not go check.
+**Resolution:** `PK_FK` → `PK,FK` (4 occurrences). Verified properly this time: extracted the
+fenced block and rendered it with `@mermaid-js/mermaid-cli` → a 164 KB SVG containing all nine
+entities (5 owned + `Item`, `Customer`, `Currency`, `No. Series`) and all relationship labels.
+**Generalized into the runbook:** Step 12 now carries a separate action — *render the diagram to
+prove it parses; never ship one you have not seen render* — with the command and this exact
+`PK_FK` failure cited as the example.
+**Files affected:** `docs/Documentation.md`, `BC_App_Build_Routine_Agent.md` (Step 12).
+**Verification:** diagram renders clean; `scripts/build.sh` → 0 errors, 0 warnings (docs-only).
+
+---
+
 ## Batch deviations
 *(none — see individual batch/issue entries above; every deviation is logged at the point it occurred)*
