@@ -1,0 +1,14 @@
+Microsoft (R) AL Compiler version 17.0.34.45391
+Copyright (C) Microsoft Corporation. All rights reserved
+
+Compilation started for project 'IP Tracking' containing '32' files at '18:44:12.934'.
+
+src/Pages/ocpfIPAppEntitlements.Page.al(3,12): info AW0006: The page 'ocpf IP App Entitlements' should use the UsageCategory and ApplicationArea properties to be searchable.
+src/Pages/ocpfIPAppPriceCard.Page.al(3,12): info AW0006: The page 'ocpf IP App Price Card' should use the UsageCategory and ApplicationArea properties to be searchable.
+src/Pages/ocpfCustomerEntitlements.Page.al(3,12): info AW0006: The page 'ocpf Customer Entitlements' should use the UsageCategory and ApplicationArea properties to be searchable.
+src/Pages/ocpfIPAppEditionCard.Page.al(3,12): info AW0006: The page 'ocpf IP App Edition Card' should use the UsageCategory and ApplicationArea properties to be searchable.
+src/Pages/ocpfIPEntitlementCard.Page.al(3,12): info AW0006: The page 'ocpf IP Entitlement Card' should use the UsageCategory and ApplicationArea properties to be searchable.
+src/Pages/ocpfIPAppCard.Page.al(3,12): info AW0006: The page 'ocpf IP App Card' should use the UsageCategory and ApplicationArea properties to be searchable.
+
+Compilation ended at '18:44:19.490'.
+
