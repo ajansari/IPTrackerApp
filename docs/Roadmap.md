@@ -37,5 +37,36 @@ requested; flagged as a reasonable, small future refinement if it turns out to m
 
 ---
 
+## R-3 — Rename the "IP App" entity
+
+**Source:** Discussion 2026-09-04/05 (before the 09F feedback batch). Explicitly deferred by the
+human — "hold off on that for now" — until testing is complete; captured here so the thread
+isn't lost, not because a decision is imminent.
+
+**Problem:** "IP App" reads badly on two fronts — "IP" collides with *IP address* well before
+*intellectual property* in most readers' minds, and "App" collides with Business Central's own
+vocabulary (an "app" is the extension itself — `app.json`, "publish the app"). Given what the
+entity actually is (per `ProblemStatement.md`: the company's *own* software products, licensed
+out to customers — not third-party software being tracked), a clearer name is available.
+
+**Candidates discussed, ranked:**
+
+1. **"Licensed Product"** (recommended) — `ocpf Licensed Product`, `ocpf Licensed Product Edition`, `ocpf Licensed Product Price`. Unambiguous, doesn't collide with "Item" (BC's own term for physical/service goods) the way plain "Product" would.
+2. **"Software Title"** — `ocpf Software Title`. Clean, common in software/media licensing verticals; slightly less natural for straight B2B licensing language.
+3. **"Offering"** — `ocpf Offering`, `ocpf Offering Edition`. Short, current SaaS vocabulary; "Offering Edition"/"Offering Price" read a little awkwardly.
+4. **"IP Asset"** — smallest change (drops "App", keeps "IP"), but keeps the IP-address collision risk that's the main reason for renaming at all.
+
+**Ripple if actioned:** table 80303's name, its List/Card/API page names and captions, the enum
+"ocpf IP License Type" (→ e.g. "Licensed Product License Type" or just "License Type"), TDD/FRD/
+ObjectRegister, `app.json`'s extension `name` (currently "IP Tracking" — would likely become
+something like "Licensed Product Tracking" or "Software License Tracking" to match), and the
+Item tableextension's "IP App" field/caption (09F-06) and the "Entitlements"/"IP Entitlements"
+navigation actions (09F-08), which all reference the entity by name. No ID or field-count
+changes — pure rename.
+
+**Status:** Idea only, deliberately deferred. Revisit once testing is done.
+
+---
+
 *(Add new items above this line as they come up. Each entry: source, idea, open questions,
 status.)*

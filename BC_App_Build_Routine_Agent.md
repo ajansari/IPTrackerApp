@@ -196,6 +196,7 @@ Then **review and validate against the DEFINE artifacts:** every entity in the e
 - **Batch / phase plan** — which modules or document-type groups are built in which order; smallest and simplest batch first (Standards §10.3).
 - **Per-object spec** — for every object: ID, type, name, source table name *and* verified source table number, `PageType`, `APIPublisher`, `APIGroup`, `EntityName`, `EntitySetName`, `ODataKeyFields = SystemId`, and exactly one of `DelayedInsert = true` / `Editable = false` per §4.2.
 - **Per-field spec** — every field by source name and camelCase identifier, with each conversion decision shown (Standards §6.1); which fields are excluded and why (Standards Part 5, driven by the Localization parameter); abbreviations applied (Standards §6.2); reserved-keyword resolutions (Standards §6.3).
+- **Computed-field pattern, decided per field, not defaulted:** a `FlowField` is always read-only and always live-recalculated — it cannot be overridden. A field that should *suggest* a value but let the user override it (e.g. a price or date derived from other fields) must be a real **stored** field, seeded by an `OnValidate`/`OnInsert` trigger, that never overwrites a value the user has already entered — the same pattern as an R-1-style suggested-date rule. Decide and state explicitly which pattern each calculated-looking field uses; do not reach for `FlowField` out of habit when "auto-populated but editable" is what's actually wanted.
 - **`SourceTableView` filters** — for every document-type-filtered page, with the correct `const()` quoting (quote only multi-word enum values) (Standards §4.3).
 - **`using` directives** — the exact namespace for every object, copied from the symbol file (Standards §3.1, §5.4).
 - **Standard object template** — the exact AL API page pattern every generated object must follow (Standards §3.3).
@@ -223,6 +224,7 @@ Then **review and validate against the DEFINE artifacts:** every entity in the e
 - [ ] Read vs. read/write designations match the mutability rules in Standards §4.2.
 - [ ] Growth buffers are planned within each module block (Standards §7.2).
 - [ ] Permission sets are planned if enabled (Parameter 1.2).
+- [ ] Every entity's deletion behavior (block-if-referenced / cascade / allow) is explicitly decided and stated — not left to whatever the template defaults to. This includes fields on *other* tables (including standard BC tables extended via `tableextension`) that reference this entity by `TableRelation`: deciding a table's deletion behavior means re-checking every known referencing field, not just this app's own child tables.
 
 **Outputs:** `SanityCheck.md` — every check, finding, resolution.
 
@@ -351,11 +353,12 @@ Classify every gap as **Intentional** (document the reasoning), **Oversight** (f
 
 **Actions:**
 - **Generate the reference documentation from the code, not from memory** (Standards §12.2). Parse every API page: extract IDs, source tables, editability, filters, and every field's identifier / source name / description / R/W status. Produce a structured reference — one section per object, one row per field — plus: quick-start deployment guide, authentication and URL patterns (Standards Appendix A), `$filter` / `$select` examples, create/update/delete examples, explicit limitations, common integration patterns, troubleshooting table.
+- **Draw the schema as a Mermaid diagram**, generated from the actual objects, not from memory. Include every table this app owns *and* every standard/base table it touches — via `TableRelation`, `tableextension`, or a `pageextension`'s `RunPageLink` — so a reader sees the whole relationship graph, not just the app's own corner of it. An ER diagram (`erDiagram`) is the usual fit; note cardinality and which side is the standard object.
 - **Write the human unit test script** — a step-by-step manual test walkthrough a person can execute: endpoint by endpoint, the happy-path and boundary cases from Step 09, expected result for each. A well-written test script is ~70% of a user guide (Standards §12.1).
 - Assemble the **user guide / documentation**. Choose format per Standards §12.5 (Markdown for technical/repo audiences; HTML with `@media print` rules for branded or print deliverables).
 - Write one-page **deployment instructions** for an administrator: version requirements, install procedure, which permission sets map to which roles, verification steps, uninstall (Standards §12.3).
 
-**Outputs:** `Documentation.md` (consumer reference), `HumanUnitTestScript.md`, user guide, `Deployment.md`.
+**Outputs:** `Documentation.md` (consumer reference, includes the Mermaid schema diagram), `HumanUnitTestScript.md`, user guide, `Deployment.md`.
 
 **Exit gate:** Reference is generated from actual code and current; test script executable by a non-developer; Dev Manager review; app ready for user acceptance testing.
 

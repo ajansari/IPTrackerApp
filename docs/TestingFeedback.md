@@ -75,3 +75,36 @@ partial Step 09 (package built, not yet published/tested live).
 Items 3–10 implemented and compiled as one batch (30 files, 0 errors/0 warnings). Two additional
 defects were found by the compile itself, not requested by the tester — logged as ChangeLog
 Issues 09F-09 (missing `using` on 4 page extensions) and 09F-10 (`Image = Entity` invalid).
+
+---
+
+## Session 2026-09-05 — follow-up (same day, second pass)
+
+**Tested by:** AJ Ansari. **Context:** immediately following the first pass above.
+
+### Raw feedback (verbatim)
+
+> Let's also add the rename thread to the roadmap - with your current suggestions. We can then
+> decide if we want to do it later.
+>
+> Are these two now enshrined in the BC_App_Build_Routine_Agent.md file?
+> - Unit Price on IP Entitlement card should auto-populate BUT should be editable
+> - What deletion controls should we have?
+>
+> If not, do it.
+>
+> Also enshrine in that file that when we create documentation, it should create a mermaid
+> schema showing the table relationships (both custom and the standard objects that are
+> affected via this extension).
+>
+> And what on earth is Remote Control that is showing up in the Claude Code sidecar?
+
+### Triage
+
+| # | Item | Disposition | Tracking |
+|---|---|---|---|
+| 1 | IP App entity rename thread → Roadmap | Done | `docs/Roadmap.md` item R-3 |
+| 2 | "Unit Price should auto-populate but be editable" — enshrined? | Not previously in the runbook. Generalized into a runbook rule (Step 03 per-field spec) **and** implemented for this app (converted from FlowField to a suggested, editable stored field) | Runbook §03; ChangeLog Issue 09F-11 |
+| 3 | "What deletion controls should we have?" — enshrined? | Not previously in the runbook as a required consideration. Added as a Step 04 checklist item (generalizable). The *specific* open question for this app's newest objects (IP App Setup, Item tie) is a live design decision, not something to decide unilaterally — raised back to the human rather than assumed | Runbook §04 checklist; open question raised in this response |
+| 4 | Mermaid schema diagram requirement | Not previously in the runbook. Added to Step 12 | Runbook §12 |
+| 5 | "What is Remote Control?" | Answered directly (Claude Code product question, not a project item) | — |

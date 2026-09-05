@@ -374,9 +374,11 @@ Same renumbering note as §6.1 applies (Monthly/Annual/Triennial shifted 0–2 �
 | 10 | "Edition Count" | Integer | FlowField, `CalcFormula = count("ocpf IP App Edition" where("IP App Code" = field("Code")))`; `Editable = false` |
 
 Keys: `key(PK; "Code") { Clustered = true; }`
-`OnDelete`: error if any `"ocpf IP App Edition"`, `"ocpf IP App Price"` or `"ocpf IP Entitlement"`
-row exists with `"IP App Code" = "Code"`. Message: `You cannot delete IP App %1 because related
-editions, prices or entitlements exist.`
+`OnDelete`: error if any `"ocpf IP App Edition"`, `"ocpf IP App Price"`, `"ocpf IP Entitlement"`
+**or `Item` (added 2026-09-05, 09F-12 — the Item↔IP App tie from 09F-06 is a referencing "child"
+too, per FRD design rule 7, and the guard was updated to match once that gap was noticed)** row
+exists with the matching code. Message: `You cannot delete IP App %1 because related editions,
+prices, entitlements or items exist.`
 
 **Rule R-2 (Other, conditionally visible — new 2026-09-05, 09F-02):** on the Card page (§8.1),
 `"Other"` is shown only when `"License Type" = "License Type"::PerOther`. Implemented with a
@@ -441,7 +443,7 @@ verified against the Business Foundation symbols, not assumed.
 | 10 | "Quantity" | Decimal | `MinValue = 0`; `InitValue = 1` |
 | 11 | "Expiration Date" | Date | user-editable; default per R-1 |
 | 12 | "License Type" | Enum "ocpf IP License Type" | FlowField `lookup("ocpf IP App"."License Type" where("Code" = field("IP App Code")))`; `Editable = false` |
-| 13 | "Unit Price" | Decimal | FlowField `lookup("ocpf IP App Price"."Unit Price" where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code"), "Billing Period" = field("Billing Period"), "Currency Code" = const('')))`; `Editable = false` |
+| 13 | "Unit Price" | Decimal | **Not a FlowField (changed 2026-09-05, 09F-11).** Real stored field, `MinValue = 0`; suggested via rule R-4 (below) on `OnValidate` of IP App Code, Edition Code, Billing Period; user-editable, never overwritten once non-zero |
 
 Keys:
 `key(PK; "No.") { Clustered = true; }`
@@ -472,6 +474,28 @@ is a reasonable v2 ask (candidate for `Roadmap.md`) but was not requested and is
 **Naming note:** the field's short `Caption` is `'No.'` (matching BC convention, e.g.
 `Customer."No."`); every ToolTip and prose reference calls it "the IP Entitlement No." in full,
 per the human's instruction that the field be short on the grid but unambiguous in context.
+
+**Rule R-4 (suggested Unit Price — new 2026-09-05, 09F-11):**
+```al
+procedure SuggestUnitPrice()
+var
+    IPAppPrice: Record "ocpf IP App Price";
+begin
+    if Rec."Unit Price" <> 0 then
+        exit;
+
+    if IPAppPrice.Get(Rec."IP App Code", Rec."Edition Code", Rec."Billing Period", '') then
+        Rec."Unit Price" := IPAppPrice."Unit Price";
+end;
+```
+Called from `OnValidate` of `"IP App Code"`, `"Edition Code"` and `"Billing Period"`. Field 13
+is no longer a `FlowField` — the computed-field-pattern rule (runbook §03) requires deciding
+explicitly between a read-only `FlowField` and a stored, suggested, user-overridable field; this
+one needed the latter, mirroring R-1. **Known edge case:** 0 is used as the "not yet suggested"
+sentinel, so a deliberately-entered `0` (e.g. a Gratis entitlement) is indistinguishable from
+"unset" and may be silently re-suggested if App, Edition or Billing Period changes again
+afterward. Accepted as a minor, documented limitation rather than adding a separate
+"has the user touched this" flag for a single field.
 
 ---
 
@@ -555,7 +579,7 @@ or equivalent) — state this in `Deployment.md` (still open, GA-01/Issue 08-01)
 ---
 
 ## 10. Special design notes
-- **Singletons:** `ocpf IP App Setup` (new, 2026-09-05) — one record, PK `"Primary Key"` (Code[10]), the standard BC Setup-table convention (verified against `Sales & Receivables Setup` / `Marketing Setup`, not assumed).
+- **Singletons:** `ocpf IP App Setup` (new, 2026-09-05) — one record, PK `"Primary Key"` (Code[10]), the standard BC Setup-table convention (verified against `Sales & Receivables Setup` / `Marketing Setup`, not assumed). `DeleteAllowed = false` on the page blocks UI deletion; an unconditional table-level `OnDelete` error (09F-12) blocks it from code or a future API page too.
 - **Header/line pairs:** none — IP App ⇄ Editions ⇄ Prices are three independent top-level pages plus two ListParts on the IP App Card.
 - **Naming conflicts / reserved keywords:** none identified; `Code`, `Description`, `Other`, `Status`, `Quantity`, `No.` are standard field names, safe as quoted identifiers.
 - **High-volume table:** `ocpf IP Entitlement` is the only one expected to grow; `No.` (Code[20], No. Series) PK + `Cust` secondary key cover the expected access paths.

@@ -319,5 +319,53 @@ which would have made rule FILE-01 expect the wrong filename suffix (`.Table.al`
 
 ---
 
+## Issue 09F-11 — IP Entitlement Unit Price should auto-populate but stay editable
+
+**Problem:** `"Unit Price"` on IP Entitlement was a `FlowField` — always read-only, always live-recalculated. The human wanted it to auto-populate *and* remain user-editable, which a `FlowField` cannot do by definition.
+**Root cause:** DESIGN (TDD §7.4, 2026-09-04) reached for `FlowField` because the value genuinely is derived from other fields — but didn't separately ask "should this be overridable?", conflating "computed" with "read-only." R-1's Expiration Date already used the correct pattern for exactly this kind of field; Unit Price didn't follow it.
+**Resolution:** Converted field 13 from a `FlowField` to a real stored `Decimal` (`MinValue = 0`), suggested by new rule R-4 — an `OnValidate`-triggered lookup against `ocpf IP App Price` (App + Edition + Billing Period + blank Currency), called from IP App Code's, Edition Code's and Billing Period's `OnValidate`, mirroring R-1's structure. Removed `Editable = false` from the table field, the Entitlement List/Card ToolTips (updated to describe "suggested, editable"), and the API page's `unitPrice` field.
+**Known limitation (documented, not fixed):** `0` is used as the "not yet suggested" sentinel. A deliberately-entered `0` (e.g. a Gratis entitlement) is indistinguishable from "unset" and may be silently re-suggested if App, Edition or Billing Period changes again afterward. Accepted rather than adding a separate "user has touched this" flag for one field.
+**Generalized into the runbook** (not just this app): Step 03's "Per-field spec" now requires deciding explicitly, per field, between a read-only `FlowField` and a stored-and-suggested field — see `BC_App_Build_Routine_Agent.md`.
+**Files affected:** `src/Tables/ocpfIPEntitlement.Table.al`, `src/Pages/ocpfIPEntitlements.Page.al`, `src/Pages/ocpfIPEntitlementCard.Page.al`, `src/API/ocpfIPEntitlementAPI.Page.al`.
+**Updated:** TDD (§7.4, new rule R-4) and FRD (§7.4) — yes.
+
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
+
+## Issue 09F-12 — Deletion controls for the objects added in 09F-06/09F-07
+
+**Problem:** "What deletion controls should we have?" — raised as a question, not a decision. Checked against the two objects 09F-06/09F-07 added: `ocpf IP App Setup` (no table-level guard, only page-level `DeleteAllowed = false`) and the Item↔IP App tie (`ocpf IP App`'s `OnDelete` guard didn't check for referencing Items).
+**Root cause:** Both are gaps left by 09F-06/09F-07, not fresh judgment calls — FRD design rule 7 ("deleting a parent that has children is blocked with a clean error") already sets the app's policy; the new objects just weren't checked against it when added. This is exactly the class of gap the new Step 04 checklist item (below) exists to catch going forward.
+**Resolution (closed without a separate decision — both are consistency fixes, not new tradeoffs):**
+- `ocpf IP App"`'s `OnDelete` guard now also blocks when any `Item` references it via the new `"IP App"` field (`using Microsoft.Inventory.Item;` added).
+- `ocpf IP App Setup` (a singleton) now has an unconditional `OnDelete` error — `DeleteAllowed = false` on the page only stops UI deletion, not a direct `Delete()` call from code or a future API page.
+**Alternative considered and rejected:** cascading the delete (null out `Item."IP App"` instead of blocking) — rejected as inconsistent with how every other reference in this app behaves (block, not cascade). Reversible if the human prefers cascade-clear instead.
+**Files affected:** `src/Tables/ocpfIPApp.Table.al`, `src/Tables/ocpfIPAppSetup.Table.al`.
+**Updated:** TDD (§7.1, §10) — yes.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
+
+## Framework additions (2026-09-05, not app-specific) — see `BC_App_Build_Routine_Agent.md`
+
+Three gaps in the runbook itself, surfaced by this session's questions, fixed at the source
+rather than only in this project's docs:
+
+1. **Computed-field pattern (Step 03, per-field spec):** distinguish a `FlowField` (always
+   read-only, live-recalculated) from a stored field seeded by a trigger that suggests a value
+   but lets the user override it — decided explicitly per field, not defaulted. Directly
+   motivated by 09F-11.
+2. **Deletion-controls checklist item (Step 04):** every entity's deletion behavior must be
+   explicitly decided and stated, *including* re-checking fields on other tables (own or
+   extended standard tables) that reference it by `TableRelation` whenever one is added. Not
+   previously required; the new IP App Setup table and the Item `"IP App"` tie (09F-06/09F-07)
+   are exactly the kind of addition this would have caught sooner.
+3. **Mermaid schema diagram (Step 12):** `Documentation.md` must include a Mermaid `erDiagram`
+   covering every table this app owns *and* every standard/base table it touches via
+   `TableRelation`, `tableextension`, or a `pageextension`'s `RunPageLink` — generated from the
+   actual objects, not from memory.
+
+No ChangeLog issue number — these aren't a deviation from this app's FRD/TDD, they're a process
+improvement to the framework all future apps built with it will inherit.
+
+---
+
 ## Batch deviations
 *(none — see individual batch/issue entries above; every deviation is logged at the point it occurred)*

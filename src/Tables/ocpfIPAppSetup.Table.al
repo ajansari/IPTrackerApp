@@ -29,4 +29,11 @@ table 80319 "ocpf IP App Setup"
             Clustered = true;
         }
     }
+
+    trigger OnDelete()
+    var
+        CannotDeleteErr: Label 'You cannot delete the IP App Setup record.';
+    begin
+        Error(CannotDeleteErr);
+    end;
 }

@@ -75,7 +75,6 @@ page 80318 "ocpf IP Entitlement API"
                 field(unitPrice; Rec."Unit Price")
                 {
                     Caption = 'Unit Price';
-                    Editable = false;
                 }
                 field(systemId; Rec.SystemId)
                 {

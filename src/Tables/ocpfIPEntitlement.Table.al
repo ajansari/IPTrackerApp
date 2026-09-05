@@ -34,12 +34,22 @@ table 80306 "ocpf IP Entitlement"
             Caption = 'IP App Code';
             NotBlank = true;
             TableRelation = "ocpf IP App"."Code";
+
+            trigger OnValidate()
+            begin
+                Rec.SuggestUnitPrice();
+            end;
         }
         field(5; "Edition Code"; Code[10])
         {
             Caption = 'Edition Code';
             NotBlank = true;
             TableRelation = "ocpf IP App Edition"."Edition Code" where("IP App Code" = field("IP App Code"));
+
+            trigger OnValidate()
+            begin
+                Rec.SuggestUnitPrice();
+            end;
         }
         field(6; "Description"; Text[80])
         {
@@ -69,6 +79,7 @@ table 80306 "ocpf IP Entitlement"
             trigger OnValidate()
             begin
                 Rec.SuggestExpirationDate();
+                Rec.SuggestUnitPrice();
             end;
         }
         field(10; "Quantity"; Decimal)
@@ -91,9 +102,7 @@ table 80306 "ocpf IP Entitlement"
         field(13; "Unit Price"; Decimal)
         {
             Caption = 'Unit Price';
-            FieldClass = FlowField;
-            CalcFormula = lookup("ocpf IP App Price"."Unit Price" where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code"), "Billing Period" = field("Billing Period"), "Currency Code" = const('')));
-            Editable = false;
+            MinValue = 0;
         }
     }
 
@@ -137,5 +146,24 @@ table 80306 "ocpf IP Entitlement"
             Rec."Billing Period"::Triennial:
                 Rec."Expiration Date" := CalcDate('<3Y>', Rec."Date of Purchase");
         end;
+    end;
+
+    /// <summary>
+    /// Rule R-4: suggests "Unit Price" by looking up "ocpf IP App Price" on IP App Code +
+    /// Edition Code + Billing Period + blank Currency Code (LCY), once all three are known.
+    /// A real stored field, not a FlowField, so the user can override it — never overwrites
+    /// a non-zero Unit Price. Edge case: a deliberately-entered 0 (e.g. a Gratis entitlement)
+    /// is indistinguishable from "not yet suggested" and may be re-suggested if App, Edition
+    /// or Billing Period is changed again afterward.
+    /// </summary>
+    procedure SuggestUnitPrice()
+    var
+        IPAppPrice: Record "ocpf IP App Price";
+    begin
+        if Rec."Unit Price" <> 0 then
+            exit;
+
+        if IPAppPrice.Get(Rec."IP App Code", Rec."Edition Code", Rec."Billing Period", '') then
+            Rec."Unit Price" := IPAppPrice."Unit Price";
     end;
 }

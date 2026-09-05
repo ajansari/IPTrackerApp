@@ -69,7 +69,7 @@ page 80313 "ocpf IP Entitlements"
                 field("Unit Price"; Rec."Unit Price")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the unit price for this app, edition, billing period and currency (LCY).';
+                    ToolTip = 'Specifies the unit price. Suggested automatically from the price list (LCY) once App, Edition and Billing Period are set; editable.';
                 }
             }
         }

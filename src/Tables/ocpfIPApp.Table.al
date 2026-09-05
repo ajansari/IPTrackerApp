@@ -1,5 +1,7 @@
 namespace OnlyCopilotFans.IPTracking;
 
+using Microsoft.Inventory.Item;
+
 table 80303 "ocpf IP App"
 {
     Caption = 'IP App';
@@ -57,12 +59,14 @@ table 80303 "ocpf IP App"
         IPAppEdition: Record "ocpf IP App Edition";
         IPAppPrice: Record "ocpf IP App Price";
         IPEntitlement: Record "ocpf IP Entitlement";
-        CannotDeleteErr: Label 'You cannot delete IP App %1 because related editions, prices or entitlements exist.', Comment = '%1 = IP App Code';
+        Item: Record Item;
+        CannotDeleteErr: Label 'You cannot delete IP App %1 because related editions, prices, entitlements or items exist.', Comment = '%1 = IP App Code';
     begin
         IPAppEdition.SetRange("IP App Code", Rec."Code");
         IPAppPrice.SetRange("IP App Code", Rec."Code");
         IPEntitlement.SetRange("IP App Code", Rec."Code");
-        if not IPAppEdition.IsEmpty() or not IPAppPrice.IsEmpty() or not IPEntitlement.IsEmpty() then
+        Item.SetRange("IP App", Rec."Code");
+        if not IPAppEdition.IsEmpty() or not IPAppPrice.IsEmpty() or not IPEntitlement.IsEmpty() or not Item.IsEmpty() then
             Error(CannotDeleteErr, Rec."Code");
     end;
 }
