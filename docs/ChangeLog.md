@@ -455,6 +455,21 @@ version bump, or to push back on a premature ask for either.
 **Verification:** `scripts/build.sh` → produces `out/IP_Tracking_1.0.0.0.app`; 0 errors, 0
 warnings, unchanged diagnostics.
 
+## Version 1.0.0.0 → 1.1.0.0 (Minor) — first repackage under the new policy
+
+**Proposed:** Minor bump. Reasoning: everything since the original BUILD-complete package
+(itself never versioned past `1.0.0.0`) has been backward-compatible additions — the entire 09F
+feedback batch (12 issues: enum values, conditional visibility, a removed field, the full
+publisher/prefix/namespace rename, the Item and Customer ties, the No. Series-driven Entitlement
+`No.` + new Setup table, the Unit Price FlowField→stored conversion, two deletion-control fixes)
+— no breaking change, no mere repackage-with-no-function, no single hotfix. That's squarely
+"new features, backward-compatible" — Minor, not Major/Build/Revision.
+**Confirmed by AJ.**
+**Resolution:** `app.json` `version`: `1.0.0.0` → `1.1.0.0`. Repackaged.
+**Files affected:** `app.json`.
+**Verification:** `scripts/build.sh` → `out/IP_Tracking_1.1.0.0.app`, 0 errors, 0 warnings, same
+4 pre-accepted info.
+
 ---
 
 ## Batch deviations
