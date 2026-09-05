@@ -15,7 +15,7 @@
 ## Operating Rules (apply in every phase)
 
 1. **Part 1 is authoritative.** Publisher, prefix, namespace, versions, ID ranges, localization — read them from the Project Parameters block (Step 01) and derive everything else. Never hardcode.
-2. **Verify against BC symbol files, not memory.** Table numbers, `using` namespaces, field IDs, `ObsoleteState` — confirm each in the symbol file named in Parameter 1.4. Agent knowledge of BC table numbers is not reliable (Standards §10.5, Appendix B).
+2. **Verify against BC symbol files, not memory.** Table numbers, `using` namespaces, field IDs, `ObsoleteState` — confirm each in the symbol file named in Parameter 1.4. Agent knowledge of BC table numbers is not reliable (Standards §10.5, Appendix B). **Fallback when the downloaded symbols don't answer the question** (a module isn't in `.alpackages`, or you need to browse/discover rather than already knowing what to grep for): the entire BC BaseApp, for the current Business Central Online version, is documented at <https://learn.microsoft.com/en-us/dynamics365/business-central/application/base-application/module/base-application> — every standard table, field, and field datatype/size. Use it to corroborate or discover; the downloaded symbol file for the target version is still the authoritative source when the two ever disagree.
 3. **Phase large scope into batches.** A batch is a self-contained, compilable, reviewable increment (by module or document-type group). Define batch boundaries during DESIGN and record them in the TDD (Standards §2 intro, §10.3).
 4. **Compile after every batch — never generate all batches first.** Treat one compiler error as a systemic signal: fix the rule/template, then every file it touched (Standards §9.3, §10.3).
 5. **Zero errors, zero warnings before PROVE.** Treat warnings as errors during development (Standards §9.4).
@@ -65,6 +65,21 @@ Goal: turn a business need into a validated, complete scope and a filled-in para
 
 **Actions:** Complete **every** field below. Replace every placeholder. These values override all defaults for the rest of the routine. This block is copied verbatim from `AL_PTE_Development_Standards_UNIFIED.md` Part 1 and is the authoritative source (Standards §1, "Authoritative-source rule").
 
+**Ask first, don't infer.** If `Extension Name`, `Publisher`, `Use Namespace (y/n)`, `Namespace`,
+`Localization`, or `AL Object Prefix` (§1.3) still carry placeholder values, ask the human
+directly — as these five questions, before writing anything:
+
+1. What is the Extension Name?
+2. Who is the Publisher?
+3. Should this project use an AL namespace? If yes, what should it be (e.g.
+   `<Publisher>.<ExtensionShort>`)?
+4. What Localization applies (`W1`, `US`, …)?
+5. What AL object prefix should be used?
+
+Do not infer these from context under time pressure (an email domain, a guess at house style) —
+that produces exactly the kind of full-project rename this framework has already had to do once
+on a real project, after the inferred publisher and prefix turned out to be wrong.
+
 ### 1.1 Extension Identity
 
 | Parameter | Placeholder | Guidance & Example |
@@ -72,7 +87,8 @@ Goal: turn a business need into a validated, complete scope and a filled-in para
 | **Extension Name** | `<ExtensionName>` | App name, not the object prefix. No AL quotes. Written to `app.json "name"`. Example: `ACME APIs` |
 | **Publisher** | `<Publisher>` | No AL quotes here. Written to `app.json "publisher"`. Example: `Contoso` |
 | **Deployment Target** | `<DeploymentTarget>` | One of the allowed values below. Governs `app.json` and `launch.json`. |
-| **Namespace** | `<Publisher>.<ExtensionShort>` | No quotes. PascalCase segments, no spaces. Example: `Contoso.AcmeAPIs` |
+| **Use Namespace (y/n)** | `<UseNamespace>` | Whether this project's AL objects declare a `namespace`. Default `Yes` — omit it only for a deliberate reason (e.g. a target AL/BC version that predates namespaces). If `No`, the `Namespace` row below is N/A and no generated file gets a `namespace` line. |
+| **Namespace** | `<Publisher>.<ExtensionShort>` | N/A if Use Namespace = `No`. Otherwise no quotes; PascalCase segments, no spaces. Example: `Contoso.AcmeAPIs` |
 | **Localization** | `<Localization>` | No quotes. **Set once here** — Part 5 derives all field/table inclusion from this value. Examples: `W1`, `NA`, `EU`, `US`. |
 
 **Deployment Target — allowed values (choose exactly one):**
@@ -93,6 +109,7 @@ Goal: turn a business need into a validated, complete scope and a filled-in para
 - `Extension Name = ACME APIs`
 - `Publisher = Contoso`
 - `Deployment Target = SaaS PTE`
+- `Use Namespace = Yes`
 - `Namespace = Contoso.AcmeAPIs`
 - `Localization = W1`
 
@@ -121,7 +138,7 @@ Goal: turn a business need into a validated, complete scope and a filled-in para
 | **APIPublisher** | `'<Publisher>'` | Single quotes in AL page metadata. Example: `'Contoso'` |
 | **APIGroup Prefix** | `<prefix>_` | Lowercase prefix + underscore, no AL quotes. Example: `acme_` |
 | **APIVersion** | `'v<Major>.<Minor>'` | Single quotes in AL. Example: `'v1.0'` |
-| **Namespace** | `<Publisher>.<ExtensionShort>` | Same value as Section 1.1. Example: `Contoso.AcmeAPIs` |
+| **Namespace** | `<Publisher>.<ExtensionShort>` | Same value as Section 1.1; N/A if Use Namespace = `No`. Example: `Contoso.AcmeAPIs` |
 | **Permission Set Prefix** | `<PREFIX> - ` | Uppercase, no AL quotes. Example: `ACME - ` |
 
 **Entity-naming patterns** — all derived from the prefix above (examples use prefix `acme`):
@@ -159,7 +176,7 @@ Goal: turn a business need into a validated, complete scope and a filled-in para
 
 **Outputs:** The completed Project Parameters block (above, all placeholders replaced); an empty **Object Register** artifact seeded with the allocated ID ranges.
 
-**Exit gate:** No placeholder remains. Deployment Target is one allowed value. Namespace matches between 1.1 and 1.3. Localization is set. If Permission Sets required = `Yes`, ≥ 2 IDs are reserved in the primary range. Human confirms the sheet.
+**Exit gate:** No placeholder remains. Deployment Target is one allowed value. Namespace matches between 1.1 and 1.3, or both are correctly N/A if Use Namespace = `No`. Localization is set. If Permission Sets required = `Yes`, ≥ 2 IDs are reserved in the primary range. Human confirms the sheet.
 
 ---
 
@@ -386,9 +403,11 @@ Every deviation from FRD or TDD — human or agent — is logged **before the ne
 **Updated:** TDD, FRD, or both — yes/no.
 ```
 
+**Name the person, not a role.** When a decision, a "hold off," or a preference is attributed to a human, write their actual name ("AJ decided X") — never a generic placeholder like "the human" or "the user." A role-noun silently assumes exactly one person exists on the project; the moment there's a second contributor, "the human decided X" stops answering the only question that phrase exists to answer — decided by *whom*. This applies throughout the TDD, FRD, and ChangeLog, not just here.
+
 ## Retain Explanations
 
-- When the agent flags something (an obsolete field, an ambiguous name, a scope question), record the flag, the human's decision, and the reasoning — not just the outcome.
+- When the agent flags something (an obsolete field, an ambiguous name, a scope question), record the flag, **who** decided and what they decided, and the reasoning — not just the outcome.
 - Every root-cause fix records the diagnosis, not only the patch, so the same class of error cannot recur in a later batch.
 - Commit each batch to version control separately, before the next begins, with a message that references its ChangeLog entries (Standards Appendix C).
 
@@ -417,9 +436,14 @@ tied to one machine's file path and invisible to git, to a teammate, and to any 
 agent that opens this repo.
 
 - **Keep it short — an anchor, not a narrative.** Current phase/step, where each live document
-  lives, any decision awaiting human sign-off, and a one-line pointer per past milestone. The
-  full story of *why* a decision was made belongs in `ChangeLog.md`; `ProjectMemory.md` just
-  says *where to look*. If it starts reading like a second ChangeLog, trim it.
+  lives, any decision awaiting sign-off, and a one-line pointer per past milestone. The full
+  story of *why* a decision was made belongs in `ChangeLog.md`; `ProjectMemory.md` just says
+  *where to look*. If it starts reading like a second ChangeLog, trim it.
+- **Every row in "Open decisions" names who it's awaiting** — `(awaiting: <name>)`. This is not
+  redundant with `git blame`: blame tells you who last edited the line, not who the project is
+  actually waiting on for a forward-looking decision. With a single contributor every row will
+  say the same name — write it anyway, so the convention is already in place the day a second
+  person joins.
 - Update it at the close of every step or batch — the same moment the ChangeLog gets its entry.
 - If the executing agent *also* has its own persistent cross-session memory capability, that
   memory may point at `docs/ProjectMemory.md` (e.g. "always read this file first") but must not

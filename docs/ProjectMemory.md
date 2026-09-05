@@ -34,18 +34,22 @@ drifted since this file was last updated.
 | `Roadmap.md` | Deferred/future work — not scheduled, just not lost |
 | `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs |
 
-## Open decisions awaiting human sign-off
+## Open decisions awaiting sign-off
+
+*Each row names who the decision is waiting on — distinct from "who last edited this file"
+(that's `git blame`'s job). Right now that's always AJ; add names here once a second person
+raises or owns a decision.*
 
 - **Roadmap R-3** — rename the "IP App" entity (candidates ranked, "Licensed Product"
-  recommended). Deliberately deferred — do not action without asking.
+  recommended). Deliberately deferred — do not action without asking. *(awaiting: AJ)*
 - **Roadmap R-1** — Sales Invoice/Order → IP Entitlement creation. Idea only; open question on
-  which Edition was sold, not designed.
-- **Roadmap R-2** — a "Manual Nos." override for IP Entitlement `No.`. Idea only.
+  which Edition was sold, not designed. *(awaiting: AJ)*
+- **Roadmap R-2** — a "Manual Nos." override for IP Entitlement `No.`. Idea only. *(awaiting: AJ)*
 - **GA-01 / Issue 08-01** — consumer permission documentation (`D365 BASIC` + Customer read)
-  not yet published as `Deployment.md`. Scheduled for Step 12, not forgotten.
+  not yet published as `Deployment.md`. Scheduled for Step 12, not forgotten. *(awaiting: AJ)*
 - **Step 09 remainder** — publish to `v29Sandbox` and run green-team/red-team tests. Needs a
   live tenant; not done standalone. Also unresolved: whether `v29Sandbox` is actually BC v29,
-  which would make the 28.4 symbols downlevel for it (SC-11).
+  which would make the 28.4 symbols downlevel for it (SC-11). *(awaiting: AJ)*
 
 ## Milestone log (one line each — full detail in `ChangeLog.md`)
 
@@ -62,6 +66,9 @@ drifted since this file was last updated.
   two deletion-control gaps closed (Item check on IP App delete; Setup singleton guard).
 - 2026-09-05 — This file created; "Session Memory" made prescriptive (`docs/ProjectMemory.md`
   required, in-repo) rather than conditional on the agent's own memory feature.
+- 2026-09-05 — Named attribution ("AJ", not "the human"/"User") applied throughout ChangeLog/TDD;
+  "awaiting: `<name>`" added to every Open Decisions row above; runbook gained a BaseApp-docs
+  symbol-file fallback and a Step 01 "ask 5 questions before inferring" kickoff rule.
 
 ## Next
 

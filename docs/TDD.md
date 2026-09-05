@@ -339,7 +339,7 @@ old ordinals (BUILD had not reached Step 09 publish). Once this app is live, onl
 Period → date offset (used for Expiration Date): Monthly `<1M>`, Annual `<1Y>`, Triennial `<3Y>`.
 Blank has no offset — rule R-1 (§7.4) simply does not fire until a real period is chosen.
 
-**Default-value ripple (explicit human decision, 2026-09-05):** this enum is shared by three
+**Default-value ripple (explicit decision by AJ, 2026-09-05):** this enum is shared by three
 fields — `ocpf IP App."Default Billing Period"`, `ocpf IP App Price."Billing Period"`, and
 `ocpf IP Entitlement."Billing Period"`. None of the three carries an explicit `InitValue`, so
 **all three now default to blank**, not Monthly as before. A new Price row or Entitlement starts
@@ -473,7 +473,7 @@ is a reasonable v2 ask (candidate for `Roadmap.md`) but was not requested and is
 
 **Naming note:** the field's short `Caption` is `'No.'` (matching BC convention, e.g.
 `Customer."No."`); every ToolTip and prose reference calls it "the IP Entitlement No." in full,
-per the human's instruction that the field be short on the grid but unambiguous in context.
+per AJ's instruction that the field be short on the grid but unambiguous in context.
 
 **Rule R-4 (suggested Unit Price — new 2026-09-05, 09F-11):**
 ```al
@@ -586,7 +586,7 @@ or equivalent) — state this in `Deployment.md` (still open, GA-01/Issue 08-01)
 - **camelCase conversions shown:** §8.2 map. "IP App Code" → `ipAppCode` (leading two-letter acronym lower-cased per API convention).
 - **Localization (W1):** no field is excluded; there are no localized base-table fields referenced.
 - **Conditional field visibility (R-2, new):** the one and only case in this app — `"Other"` on the IP App Card. Pattern: page-scoped `Boolean`, recomputed on `OnAfterGetCurrRecord` and on the driving field's `OnValidate`, bound via `Visible = <variable>`. Do not attempt a direct `Rec`-expression in a `Visible` property value.
-- **Cross-reference navigation (new):** "view the other side" actions (IP App/List → Entitlements; Customer Card/List → IP Entitlements) use `RunObject` + `RunPageLink`, not a FactBox — analogous to BC's own Item↔Vendor "Item Vendor Catalog" pattern, per the human's explicit request.
+- **Cross-reference navigation (new):** "view the other side" actions (IP App/List → Entitlements; Customer Card/List → IP Entitlements) use `RunObject` + `RunPageLink`, not a FactBox — analogous to BC's own Item↔Vendor "Item Vendor Catalog" pattern, per AJ's explicit request.
 
 ---
 

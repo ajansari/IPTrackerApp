@@ -8,16 +8,16 @@ Ground truth for what was built and why. Every deviation from FRD/TDD logged bef
 
 ### A-1 — Extension identity
 **Decision:** Publisher `DSW`, Extension Name `IP Tracking`, prefix `ipt`, namespace `DSW.IPTracking`, Deployment Target `SaaS PTE`, Localization `W1`.
-**Reason:** User delegated the naming decision ("do what you think's right"). `DSW` from the user's email domain.
+**Reason:** AJ delegated the naming decision ("do what you think's right"). `DSW` from AJ's email domain.
 **Reverse cost:** Low if changed before Batch 1 (edit intake sheet + `app.json` + regenerate).
 
 ### A-2 — ID range widened
 **Decision:** 80300–80339 (was 80300–80319).
-**Reason:** UI + API + 2 permission sets = 21 objects; 20-ID range was 1 short. User confirmed 80300–80339 is free.
+**Reason:** UI + API + 2 permission sets = 21 objects; 20-ID range was 1 short. AJ confirmed 80300–80339 is free.
 
 ### A-3 — Price duplication resolved
 **Decision:** `ipt IP App Edition."Unit Price"` is the reference/list price; `ipt IP App Price` is the authoritative price matrix keyed by App + Edition + Billing Period + Currency. Pricing basis (per user / per company / …) is implied by `ipt IP App."License Type"`, not a separate field.
-**Reason:** User's spec put a price on both the Editions table and a separate Pricing table at the same grain — a contradiction. This keeps both without redundancy.
+**Reason:** AJ's spec put a price on both the Editions table and a separate Pricing table at the same grain — a contradiction. This keeps both without redundancy.
 
 ### A-4 — No Setup table / no number series (v1)
 **Decision:** `ipt IP Entitlement."Entry No."` is `AutoIncrement`. `Code` fields are entered manually. No module Setup table.
@@ -33,11 +33,11 @@ Ground truth for what was built and why. Every deviation from FRD/TDD logged bef
 
 ### A-7 — Expiration instead of an "Expired" status
 **Decision:** Status enum stays {Gratis, Active, Demo}. `"Expiration Date"` (auto-suggested = Date of Purchase + 1M/1Y/3Y by Billing Period, user-editable) represents lapse. `Status` default = `Active`.
-**Reason:** User's status list had no terminal value; a date is more precise than a status for lapse.
+**Reason:** AJ's status list had no terminal value; a date is more precise than a status for lapse.
 
 ### A-8 — API pages editable
 **Decision:** All four API pages use `DelayedInsert = true` (read/write).
-**Reason:** User asked for "both" UI and API; no read-only constraint stated. Read-only consumers are served by the `IPT - IP Tracking Read` permission set.
+**Reason:** AJ asked for "both" UI and API; no read-only constraint stated. Read-only consumers are served by the `IPT - IP Tracking Read` permission set.
 
 ### A-9 — Card ListParts added
 **Decision:** IP App Card hosts an Editions ListPart (80320) and a Prices ListPart (80321), using two of the spare IDs.
@@ -247,7 +247,7 @@ touches every existing file and the new objects in 09F-06/07/08 depend on the re
 **Problem:** `"Default Billing Period"` on IP App had no way to leave it unspecified.
 **Root cause:** Same as 09F-01 — surfaced only in testing.
 **Resolution:** Added blank at ordinal 0 to the shared `ocpf IP Billing Period` enum, same renumbering approach and same one-time-exception justification as 09F-01.
-**Ripple (explicit human decision):** the enum is shared by three fields. Offered a choice — keep `IP App Price."Billing Period"` and `IP Entitlement."Billing Period"` defaulting to Monthly via explicit `InitValue`, or let all three default blank. **Decision: let all three default blank.** No `InitValue` added to either field; a new Price row or Entitlement now starts with no Billing Period until the user picks one, which also delays rule R-1 and the Unit Price FlowField lookup.
+**Ripple (explicit decision by AJ):** the enum is shared by three fields. Offered a choice — keep `IP App Price."Billing Period"` and `IP Entitlement."Billing Period"` defaulting to Monthly via explicit `InitValue`, or let all three default blank. **Decision: let all three default blank.** No `InitValue` added to either field; a new Price row or Entitlement now starts with no Billing Period until the user picks one, which also delays rule R-1 and the Unit Price FlowField lookup.
 **Files affected:** `src/Enums/ocpfIPBillingPeriod.Enum.al`.
 **Updated:** TDD (§6.2, §7.3, §7.4) and FRD (§7.1, §7.3, §7.4) — yes.
 
@@ -260,7 +260,7 @@ touches every existing file and the new objects in 09F-06/07/08 depend on the re
 
 ## Issue 09F-05 — Rename prefix/publisher/namespace: `ipt`/`DSW` → `ocpf`/`OnlyCopilotFans`
 **Problem:** Prefix and publisher no longer matched the actual organization.
-**Root cause:** A-1 set `DSW`/`ipt` from the user's email domain under DEFINE-phase time pressure; corrected once the actual publisher was confirmed.
+**Root cause:** A-1 set `DSW`/`ipt` from AJ's email domain under DEFINE-phase time pressure; corrected once the actual publisher was confirmed.
 **Resolution:** `app.json` publisher → `OnlyCopilotFans`; AL object prefix `ipt`→`ocpf`; permission-set prefix `IPT - `→`OCPF - ` (both new names are exactly 20 chars, the AL0305 boundary — verified by compiling, not measured by eye); `APIPublisher` `'dsw'`→`'ocpf'`, `APIGroup` `'ipt_ipManagement'`/`'iptIpManagement'`→`'ocpfIpManagement'`. **Namespace `DSW.IPTracking`→`OnlyCopilotFans.IPTracking`** — not explicitly requested but caught by the "any other DSW references" audit: leaving the old publisher baked into every object's namespace while the publisher itself changed would have been an inconsistent, incomplete rename. All 23 existing files renamed accordingly (filenames included, per the `<ObjectNameWithoutSpaces>.<Type>.al` convention).
 **Audit result:** zero `DSWi` references found anywhere. All `DSW` references were either the four items just listed (now fixed) or historical mentions inside `ChangeLog.md`/`SanityCheck.md`/`BuildPlan.md`/`GapAnalysis.md` recording past decisions — left untouched, as rewriting dated history would falsify the record.
 **Files affected:** all 23 pre-existing `.al` files (renamed), `app.json`, `scripts/preflight.py` (`PARAM` block).
@@ -321,7 +321,7 @@ which would have made rule FILE-01 expect the wrong filename suffix (`.Table.al`
 
 ## Issue 09F-11 — IP Entitlement Unit Price should auto-populate but stay editable
 
-**Problem:** `"Unit Price"` on IP Entitlement was a `FlowField` — always read-only, always live-recalculated. The human wanted it to auto-populate *and* remain user-editable, which a `FlowField` cannot do by definition.
+**Problem:** `"Unit Price"` on IP Entitlement was a `FlowField` — always read-only, always live-recalculated. AJ wanted it to auto-populate *and* remain user-editable, which a `FlowField` cannot do by definition.
 **Root cause:** DESIGN (TDD §7.4, 2026-09-04) reached for `FlowField` because the value genuinely is derived from other fields — but didn't separately ask "should this be overridable?", conflating "computed" with "read-only." R-1's Expiration Date already used the correct pattern for exactly this kind of field; Unit Price didn't follow it.
 **Resolution:** Converted field 13 from a `FlowField` to a real stored `Decimal` (`MinValue = 0`), suggested by new rule R-4 — an `OnValidate`-triggered lookup against `ocpf IP App Price` (App + Edition + Billing Period + blank Currency), called from IP App Code's, Edition Code's and Billing Period's `OnValidate`, mirroring R-1's structure. Removed `Editable = false` from the table field, the Entitlement List/Card ToolTips (updated to describe "suggested, editable"), and the API page's `unitPrice` field.
 **Known limitation (documented, not fixed):** `0` is used as the "not yet suggested" sentinel. A deliberately-entered `0` (e.g. a Gratis entitlement) is indistinguishable from "unset" and may be silently re-suggested if App, Edition or Billing Period changes again afterward. Accepted rather than adding a separate "user has touched this" flag for one field.
@@ -338,7 +338,7 @@ which would have made rule FILE-01 expect the wrong filename suffix (`.Table.al`
 **Resolution (closed without a separate decision — both are consistency fixes, not new tradeoffs):**
 - `ocpf IP App"`'s `OnDelete` guard now also blocks when any `Item` references it via the new `"IP App"` field (`using Microsoft.Inventory.Item;` added).
 - `ocpf IP App Setup` (a singleton) now has an unconditional `OnDelete` error — `DeleteAllowed = false` on the page only stops UI deletion, not a direct `Delete()` call from code or a future API page.
-**Alternative considered and rejected:** cascading the delete (null out `Item."IP App"` instead of blocking) — rejected as inconsistent with how every other reference in this app behaves (block, not cascade). Reversible if the human prefers cascade-clear instead.
+**Alternative considered and rejected:** cascading the delete (null out `Item."IP App"` instead of blocking) — rejected as inconsistent with how every other reference in this app behaves (block, not cascade). Reversible if AJ prefers cascade-clear instead.
 **Files affected:** `src/Tables/ocpfIPApp.Table.al`, `src/Tables/ocpfIPAppSetup.Table.al`.
 **Updated:** TDD (§7.1, §10) — yes.
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
@@ -386,6 +386,37 @@ required-documents list, which had never been updated when those two were create
 **Files affected:** `docs/ProjectMemory.md` (new, this project's own copy — see the file for
 current state); Claude Code's own external memory note trimmed to a pointer, per the new rule.
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
+
+## Framework additions (2026-09-05, third pass) — named attribution, awaiting-name, BaseApp docs fallback, Step 01 kickoff questions
+
+Four items, all originating from AJ's own review of the runbook (checking, not assuming, what
+it actually says — the same discipline this framework has been built with throughout):
+
+1. **Named attribution, not a role noun.** "Track Changes — the ChangeLog" now requires naming
+   the actual person ("AJ decided X"), never "the human"/"the user" — a role-noun silently
+   assumes exactly one contributor exists. Applied retroactively in this project: every
+   ChangeLog and TDD occurrence of "the human"/"User"/"the user's" that attributed a decision to
+   AJ specifically was renamed to "AJ" (occurrences referring to a future *end-user of the built
+   app* — e.g. "until the user picks one," "remain user-editable" — were correctly left alone;
+   those aren't AJ).
+2. **"Awaiting: `<name>`" on every Open Decisions row.** Added to the "Project Memory" section —
+   distinct from `git blame` (who last edited the line) because it's forward-looking (who the
+   project is waiting on), not historical. Applied to all five rows in `docs/ProjectMemory.md`.
+3. **BaseApp documentation as a symbol-file fallback.** Operating Rule 2 now names
+   <https://learn.microsoft.com/en-us/dynamics365/business-central/application/base-application/module/base-application>
+   as where to look when a standard table/field/datatype isn't answerable from the downloaded
+   `.alpackages` symbols (a module not included, or when browsing/discovering rather than
+   already knowing what to grep for). The symbol file remains authoritative if the two disagree.
+4. **Step 01 kickoff — ask, don't infer.** If Extension Name, Publisher, Use Namespace (y/n),
+   Namespace, Localization or AL Object Prefix still carry placeholders, the agent must ask the
+   human these five questions directly before writing anything — explicitly citing this
+   project's own A-1 (publisher/prefix inferred from an email domain under time pressure, later
+   walked back in 09F-05) as the cautionary example. This also **added a new parameter**, "Use
+   Namespace (y/n)," to §1.1/§1.3 — AL namespaces are optional, and the intake sheet never had a
+   way to say so; `Namespace` is N/A when the answer is `No`.
+
+No ChangeLog issue number — process improvements to the framework, not a deviation from this
+app's FRD/TDD. **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged.
 
 ---
 
