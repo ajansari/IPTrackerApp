@@ -1,6 +1,10 @@
 # Functional Requirements Document — IP Tracking
 
-*Runbook phase: DESIGN / Step 02. Status: **Step 04 sanity check passed (2026-09-04); testing-feedback batch 09F-01…09F-08 applied (2026-09-05) — see `ChangeLog.md` and `TestingFeedback.md`**.*
+*Runbook phase: DESIGN / Step 02, **re-baselined at Step 11 (2026-09-05)**.*
+*Status: **this is the forward baseline** — every implementation decision that diverged from the
+original requirements has been folded in, including where the implementation turned out better
+than the plan. The next planning session starts from this document, not from the pre-BUILD text.
+For the object-level as-built truth see `PostDevTDD.md`; for why each thing changed, `ChangeLog.md`.*
 *Companion: `BC_App_Build_Routine_Agent.md`. Detailed rules: `AL_PTE_Development_Standards_UNIFIED.md` (not present in repo — inline runbook summaries used).*
 
 ---
@@ -142,11 +146,12 @@ alternative (keep Price/Entitlement defaulting to Monthly) was offered and decli
 ## 8. Non-functional requirements
 - Compiles with **0 errors / 0 warnings** (warnings treated as errors).
 - No reference to any field/table/procedure with `ObsoleteState = Pending`/`Removed`.
-- API list reads return within normal BC page limits. FlowFields on list pages are permitted where each is bounded to a single row or a single count (`Edition Count` on 80307, `Unit Price` on 80313); no unbounded aggregation. (Clarified at Step 04 — SanityCheck SC-12.)
+- API list reads return within normal BC page limits. FlowFields on list pages are permitted where each is bounded to a single row or a single count; no unbounded aggregation (SC-12). **As-built:** the remaining list FlowFields are `Edition Count` (80307) and `Customer Name` (80313/80328) — `Unit Price` is no longer a FlowField at all (09F-11), so the original example in this rule no longer applies.
 - All objects use IDs strictly within **80300–80339**.
-- Deployable as a signed `.app` to a SaaS sandbox and then production.
+- Deployable as a signed `.app` to a SaaS sandbox and then production. **As-built status:** published to `v29Sandbox` by AJ at `1.2.0.1`; the green-team/red-team verification that would confirm this NFR was skipped by instruction, so this requirement is **asserted, not demonstrated** (see ChangeLog, Step 09).
+- **As-built compile state:** 0 errors / 0 warnings, plus 6 permanently-accepted `AW0006` infos (4 Card pages + 2 catalog pages, none of which carry `UsageCategory` by design).
 
 ## 9. Validation against DEFINE artifacts
-- Every entity from the intake conversation appears in §6 (IP App, Editions, Pricing, customer register) or is listed out of scope (Setup table, number series).
+- Every entity from the intake conversation appears in §6. **Re-baselined:** the Setup table and number series, originally deferred as out of scope (A-4), are now **in scope and built** (09F-07) — `ocpf IP App Setup` drives the IP Entitlement `No.` series. Still genuinely out of scope: billing/posting, currency conversion, renewal automation, usage metering, workflow.
 - Consumer use cases from PRE-01 (internal maintenance + BI/integration read) are both addressed (§7.5, §7.6).
 - Platform assumptions **verified at Step 04** against the 28.4 symbol files: Customer = table 18 (`Microsoft.Sales.Customer`, `"No."` Code[20], `Name` Text[100]); Currency = table 4 (`Microsoft.Finance.Currency`, `Code` Code[10]); none obsolete. Full record: `docs/SanityCheck.md`.

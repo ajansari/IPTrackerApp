@@ -5,8 +5,9 @@
 out/
 *.app
 
-# Symbol cache rebuilt from .alpackages by scripts/preflight.py
+# Generated caches — rebuilt from source/symbols by the scripts that own them
 scripts/.symbolcache.json
+scripts/.asbuilt.json
 
 # Local artifacts
 .snapshots/

@@ -8,9 +8,11 @@ Update at the close of every step or batch. Committed to git like every other do
 
 ## Current state (2026-09-05)
 
-**Phase:** PROVE. BUILD complete; Step 08 (Gap-Fit) closed; **Step 09 published by AJ to
-`v29Sandbox` but its live tests were skipped by instruction — exit gate NOT met** (see ChangeLog);
-**Step 10 (Code Review) complete** — 2 findings, both fixed. Two testing-feedback rounds applied.
+**Phase:** PROVE — **Steps 10, 11 and 12 complete; only Step 09's live verification outstanding.**
+BUILD complete; Step 08 (Gap-Fit) closed; **Step 09: published by AJ to `v29Sandbox`, but its
+green/red-team tests were skipped by instruction — exit gate NOT met**; Step 10 Code Review done
+(2 findings fixed); Step 11 as-built docs done; Step 12 documentation set done. The app is
+feature-complete and documented, but **has never been functionally verified on a live tenant**.
 
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
 runtime 17.0, ID range 80300–80339 (32 used, 8 free). Dependency on Business Foundation
@@ -37,6 +39,10 @@ true before trusting anything below — it may have drifted since this file was 
 | `ChangeLog.md` | Every decision, its reasoning, and every defect found + fixed |
 | `TestingFeedback.md` | Raw human testing input, verbatim, before triage |
 | `Roadmap.md` | Deferred/future work — not scheduled, just not lost |
+| `PostDevTDD.md` | **As-built** object truth — what actually exists. Beats `TDD.md` where they disagree |
+| `Documentation.md` | Consumer/integration API reference + Mermaid schema (generated from code) |
+| `HumanUnitTestScript.md` | 40-step manual test pass — **specification, not yet executed** |
+| `Deployment.md` | Admin install/permissions/upgrade/uninstall guide |
 | `CodeReview.md` | Step 10 findings — point-in-time record |
 | `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs. Each now carries a banner pointing back here |
 
@@ -51,8 +57,8 @@ raises or owns a decision.*
 - **Roadmap R-1** — Sales Invoice/Order → IP Entitlement creation. Idea only; open question on
   which Edition was sold, not designed. *(awaiting: AJ)*
 - **Roadmap R-2** — a "Manual Nos." override for IP Entitlement `No.`. Idea only. *(awaiting: AJ)*
-- **GA-01 / Issue 08-01** — consumer permission documentation (`D365 BASIC` + Customer read)
-  not yet published as `Deployment.md`. Scheduled for Step 12, not forgotten. *(awaiting: AJ)*
+- ~~**GA-01 / Issue 08-01** — consumer permission documentation~~ **CLOSED at Step 12** —
+  published as `Deployment.md` §4 with a role-mapping table.
 - **Step 09 exit gate unmet** — AJ published `1.2.0.1` to `v29Sandbox`, but the green-team /
   red-team / live permission verification were skipped by AJ's instruction. Never established
   either way: whether the 4 custom API pages are actually discoverable/installed there (neither
@@ -121,10 +127,19 @@ raises or owns a decision.*
   2 scan hits dismissed as false positives, 2 real findings fixed — 10-01 (catalog pages missing
   the `"No."` column, late-batch drift) and 10-02 (Item extension field had no
   `DataClassification`, the app's only unclassified field).
+- 2026-09-05 — Step 11: `PostDevTDD.md` written (as-built, generated via new
+  `scripts/extract_asbuilt.py`); `FRD.md` re-baselined — caught 2 genuinely stale statements
+  (the Unit Price FlowField NFR, and Setup/number-series still listed as out of scope).
+- 2026-09-05 — Step 12: `Documentation.md` (API reference + Mermaid erDiagram, generated from
+  code), `HumanUnitTestScript.md` (40 steps, not yet run), `Deployment.md` (closes GA-01).
 
 ## Next
 
-Step 09 remainder (publish + test on `v29Sandbox`), then Step 10 (Code Review — `/code-review
-ultra` is user-triggered/billed, offer it), Step 11 (update design docs if PROVE surfaces
-anything), Step 12 (Document the Code: API reference, **Mermaid `erDiagram`** covering owned +
-touched standard tables, `Deployment.md` closing GA-01, integration examples).
+**The runbook is complete through Step 12 except Step 09's live verification.** What remains:
+
+1. **Run `HumanUnitTestScript.md` against `v29Sandbox`** — the outstanding Step 09 work, now with
+   a written 40-step script to follow. Until this passes, "working" is asserted, not demonstrated.
+2. **Optional:** `/code-review ultra` for an independent multi-agent review (user-triggered/billed).
+3. **Decide the open items** listed above — the IP App rename (R-3), License Key table placement,
+   the `resourceExposurePolicy` source-shipping question, and the preflight `tableextension` rule gap.
+4. Roadmap R-1/R-2/R-4 remain unscheduled ideas.
