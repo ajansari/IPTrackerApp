@@ -12,3 +12,6 @@ scripts/.asbuilt.json
 # Local artifacts
 .snapshots/
 .DS_Store
+
+# The BC Appl Build Routine Agent
+BC_App_Build_Routine_Agent.md
