@@ -2,8 +2,8 @@
 .alpackages/
 
 # AL build output
-out/
 *.app
+!out/**/*.app
 
 # Generated caches — rebuilt from source/symbols by the scripts that own them
 scripts/.symbolcache.json
