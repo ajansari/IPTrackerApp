@@ -75,8 +75,9 @@ page 80308 "ocpf IP App Card"
                 Caption = 'Entitlements';
                 ToolTip = 'View the customers entitled to this IP app.';
                 Image = List;
-                RunObject = page "ocpf IP Entitlements";
+                RunObject = page "ocpf IP App Entitlements";
                 RunPageLink = "IP App Code" = field(Code);
+                RunPageView = sorting("IP App Code");
             }
         }
     }

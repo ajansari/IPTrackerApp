@@ -81,10 +81,12 @@ the Setup table/page and the Item/Customer ties consumed 7 of the former buffer 
 | Card parts | 80320–80321 | Editions ListPart, Prices ListPart |
 | Setup page | 80322 | `ocpf IP App Setup` |
 | Extensions | 80323–80327 | Item tableextension; Item Card/List, Customer Card/List pageextensions |
-| Growth / tail buffer | 80328–80337 | 10 IDs unallocated (25% headroom) |
+| Catalog pages | 80328–80329 | `ocpf IP App Entitlements`, `ocpf Customer Entitlements` (09F-13 §2) |
+| Growth / tail buffer | 80330–80337 | 8 IDs unallocated (20% headroom) |
 | Permission sets | 80338–80339 | Read, Edit |
 
-30 objects total (was 23 at BUILD-complete; +7 from the 2026-09-05 feedback batch).
+32 objects total (was 23 at BUILD-complete; +7 from the first 2026-09-05 feedback batch;
++2 catalog pages from 09F-13's second pass).
 
 ---
 
@@ -498,29 +500,40 @@ sentinel, so a deliberately-entered `0` (e.g. a Gratis entitlement) is indisting
 afterward. Accepted as a minor, documented limitation rather than adding a separate
 "has the user touched this" flag for a single field.
 
-**Rule R-5 (default a new record's key field from the page's active filter — new 2026-09-05,
-09F-13):** on page 80313 "ocpf IP Entitlements":
-```al
-trigger OnNewRecord(BelowxRec: Boolean)
-var
-    IPAppCodeFilter: Text;
-    CustomerNoFilter: Text;
-begin
-    IPAppCodeFilter := Rec.GetFilter("IP App Code");
-    if IPAppCodeFilter <> '' then
-        Rec.Validate("IP App Code", CopyStr(IPAppCodeFilter, 1, MaxStrLen(Rec."IP App Code")));
+**Rule R-5 (cross-reference catalog pattern — revised 2026-09-05, 09F-13, second pass):**
 
-    CustomerNoFilter := Rec.GetFilter("Customer No.");
-    if CustomerNoFilter <> '' then
-        Rec.Validate("Customer No.", CopyStr(CustomerNoFilter, 1, MaxStrLen(Rec."Customer No.")));
-end;
+The first attempt at this fix (an `OnNewRecord` trigger on the shared general list, page 80313)
+did **not** actually resolve the defect in testing — AJ reported it "still broken in v1.2.0.0"
+from both directions. Rather than keep guessing, the real Base App pattern for exactly this
+scenario was checked directly against the symbols (Operating Rule 2), not assumed:
+
+**Verified from `Microsoft_Base Application` symbols** — Item Card's real "Ven&dors" action:
 ```
-**Defect fixed:** creating a new Entitlement from either cross-reference action (80307/80308's
-"Entitlements", or the Customer pageextensions' "IP Entitlements" — both `RunPageLink` a single
-field into this same List page, §8.3) produced a record that didn't carry the filtered value, so
-the new record fell **outside** the very filter it was created under and appeared to vanish/fail.
-`RunPageLink` filters the page; it does not by itself default a new record's field. One trigger
-on the shared target page fixes both entry points, since both funnel through it.
+RunObject = 'Item Vendor Catalog'; RunPageLink = '"Item No." = field("No.")';
+RunPageView = 'sorting("Item No.")';
+```
+Same `RunObject`/`RunPageLink` mechanism this project already used — that part was never wrong.
+The difference: the target page ("Item Vendor Catalog", table "Item Vendor") has **no
+`CardPageId`** — new records are created and edited **inline** in the list, never navigating to
+a separate Card page — and the linking field (`"Item No."`) is simply **hidden**
+(`Visible = false`), since it's implied by the direction you navigated from. Our original fix
+kept `CardPageId = "ocpf IP Entitlement Card"` on the shared target list, which routes "New"
+through a *separate* Card page object — breaking exactly this. The general list's `CardPageId`
+is genuinely useful for its own direct/Tell-Me entry point; the fix isn't to remove it there,
+it's to stop reusing that page for the cross-reference actions at all.
+
+**Resolution — two new dedicated catalog pages, mirroring "Item Vendor Catalog" exactly:**
+- `page 80328 "ocpf IP App Entitlements"` — List, no `CardPageId`, `"IP App Code"` hidden
+  (`Visible = false`). Target of the "Entitlements" action on 80307/80308.
+- `page 80329 "ocpf Customer Entitlements"` — List, no `CardPageId`, `"Customer No."` hidden.
+  Target of the "IP Entitlements" action on the Customer pageextensions (80326/80327).
+
+Both keep an `OnNewRecord` trigger reading `Rec.GetFilter` on their one relevant field as
+defense-in-depth (harmless, and guards against any client-version nuance in native
+`RunPageLink` defaulting) — but the structural fix (no `CardPageId`, field hidden) is what
+actually mirrors the proven-correct Microsoft pattern. The general list (80313, unchanged
+otherwise) had its now-unnecessary `OnNewRecord` removed — it's no longer reached via
+`RunPageLink`. All four actions gained `RunPageView = sorting(...)` to match the real pattern.
 
 ---
 
@@ -530,17 +543,19 @@ on the shared target page fixes both entry points, since both funnel through it.
 
 | ID | Name | PageType | SourceTable | Notes |
 |---|---|---|---|---|
-| 80307 | "ocpf IP Apps" | List | "ocpf IP App" | `UsageCategory = Lists`; `CardPageId = "ocpf IP App Card"`. Columns: Code, Description, License Type, Default Billing Period, Default Edition Code, Edition Count. **New:** `action(Entitlements)` under `area(Navigation)`, `RunObject = page "ocpf IP Entitlements"`, `RunPageLink = "IP App Code" = field(Code)` |
-| 80308 | "ocpf IP App Card" | Card | "ocpf IP App" | `group(General)`: Code, Description, License Type, Other (**Visible = OtherVisible**, R-2), Default Billing Period, Default Edition Code. `part(Editions; "ocpf IP App Editions Part")` on `"IP App Code" = field("Code")`. `part(Prices; "ocpf IP App Prices Part")` on `"IP App Code" = field("Code")`. **New:** same `Entitlements` action as 80307 |
+| 80307 | "ocpf IP Apps" | List | "ocpf IP App" | `UsageCategory = Lists`; `CardPageId = "ocpf IP App Card"`. Columns: Code, Description, License Type, Default Billing Period, Default Edition Code, Edition Count. `action(Entitlements)` under `area(Navigation)`, `RunObject = page "ocpf IP App Entitlements"` (**retargeted 09F-13 §2** — was the general list 80313), `RunPageLink = "IP App Code" = field(Code)`, `RunPageView = sorting("IP App Code")` |
+| 80308 | "ocpf IP App Card" | Card | "ocpf IP App" | `group(General)`: Code, Description, License Type, Other (**Visible = OtherVisible**, R-2), Default Billing Period, Default Edition Code. `part(Editions; "ocpf IP App Editions Part")` on `"IP App Code" = field("Code")`. `part(Prices; "ocpf IP App Prices Part")` on `"IP App Code" = field("Code")`. Same retargeted `Entitlements` action as 80307 |
 | 80309 | "ocpf IP App Editions" | List | "ocpf IP App Edition" | `UsageCategory = Lists`; `CardPageId = "ocpf IP App Edition Card"`. Columns: IP App Code, Edition Code, Description — **Unit Price column removed (09F-04)** |
 | 80310 | "ocpf IP App Edition Card" | Card | "ocpf IP App Edition" | `group(General)`: IP App Code, Edition Code, Description — **Unit Price field removed (09F-04)** |
 | 80311 | "ocpf IP App Prices" | List | "ocpf IP App Price" | Unchanged except rename. Columns: IP App Code, Edition Code, Billing Period, Currency Code, Unit Price |
 | 80312 | "ocpf IP App Price Card" | Card | "ocpf IP App Price" | Unchanged except rename. `group(General)`: all five fields |
-| 80313 | "ocpf IP Entitlements" | List | "ocpf IP Entitlement" | Columns: **No.** (was Entry No.; `Editable = false`), Customer No., Customer Name, IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. **License Key deliberately not shown here** (09F-14). **`OnNewRecord` rule R-5 (09F-13)** defaults IP App Code/Customer No. from the page's active filter |
+| 80313 | "ocpf IP Entitlements" | List | "ocpf IP Entitlement" | `UsageCategory = Lists`; the general/Tell-Me entry point, `CardPageId = "ocpf IP Entitlement Card"` retained. Columns: **No.** (was Entry No.; `Editable = false`), Customer No., Customer Name, IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. **License Key deliberately not shown here** (09F-14). **No longer a `RunPageLink` target (09F-13 §2)** — its `OnNewRecord` workaround was removed as unnecessary |
 | 80314 | "ocpf IP Entitlement Card" | Card | "ocpf IP Entitlement" | `group(General)`: **No.** (`Editable = false`), Customer No., Customer Name; `group(Product)`: IP App Code, Edition Code, Description, License Type; `group(Terms)`: Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price, **License Key** (09F-14) |
 | 80319 | *(table, not a page)* | | | |
 | 80320 | "ocpf IP App Editions Part" | ListPart | "ocpf IP App Edition" | Columns: Edition Code, Description — **Unit Price removed (09F-04)** |
 | 80321 | "ocpf IP App Prices Part" | ListPart | "ocpf IP App Price" | Unchanged except rename. Columns: Edition Code, Billing Period, Currency Code, Unit Price |
+| 80328 | "ocpf IP App Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2 (revised fix).** Dedicated catalog page mirroring Base App's "Item Vendor Catalog" exactly. No `UsageCategory`, no `CardPageId` — reached only via `RunObject`, edited inline. `"IP App Code"` hidden (`Visible = false`, implied by context). Columns: Customer No., Customer Name, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"IP App Code"` from `Rec.GetFilter` (defense-in-depth) |
+| 80329 | "ocpf Customer Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2.** Same pattern, mirrored for the Customer direction. `"Customer No."` hidden. Columns: IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"Customer No."` |
 | 80322 | "ocpf IP App Setup" | Card | "ocpf IP App Setup" | **New (09F-07).** `UsageCategory = Administration`; `InsertAllowed = false`; `DeleteAllowed = false`. `OnOpenPage`: `if not Rec.Get() then begin Rec.Init(); Rec.Insert(); end;` — singleton, standard Setup-page pattern. Field: "IP Entitlement Nos." |
 
 Every page field: `ApplicationArea = All` + `ToolTip` (except the one conditionally-hidden field,
@@ -572,8 +587,8 @@ Field identifier map (camelCase; source field in quotes):
 | 80323 | `tableextension "ocpf Item"` | table 27 Item | Adds `"IP App"` (Code[10], `TableRelation = "ocpf IP App".Code`, optional — not every item has an IP association) |
 | 80324 | `pageextension "ocpf Item Card"` | page 30 "Item Card" | `addlast(Item)` — adds the `"IP App"` field to the existing `Item` group |
 | 80325 | `pageextension "ocpf Item List"` | page 31 "Item List" | `addlast(Control1)` — the repeater's real internal name (confirmed against symbols, not assumed) |
-| 80326 | `pageextension "ocpf Customer Card"` | page 21 "Customer Card" | `addlast(Navigation)` — action `"IP Entitlements"`, `RunObject = page "ocpf IP Entitlements"`, `RunPageLink = "Customer No." = field("No.")` |
-| 80327 | `pageextension "ocpf Customer List"` | page 22 "Customer List" | Same action as 80326 |
+| 80326 | `pageextension "ocpf Customer Card"` | page 21 "Customer Card" | `addlast(Navigation)` — action `"IP Entitlements"`, `RunObject = page "ocpf Customer Entitlements"` (**retargeted 09F-13 §2** — was the general list 80313), `RunPageLink = "Customer No." = field("No.")`, `RunPageView = sorting("Customer No.")` |
+| 80327 | `pageextension "ocpf Customer List"` | page 22 "Customer List" | Same retargeted action as 80326 |
 
 `addlast(Navigation)` targets the page's `area(Navigation)` directly — it does not require
 finding and naming one of the base page's existing action *groups* (e.g. `&Customer`), which

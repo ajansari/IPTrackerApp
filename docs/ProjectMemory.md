@@ -12,14 +12,14 @@ Update at the close of every step or batch. Committed to git like every other do
 yet published to a live tenant). Two testing-feedback rounds applied on top of BUILD.
 
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
-runtime 17.0, ID range 80300–80339 (28 used, 12 free). Dependency on Business Foundation
+runtime 17.0, ID range 80300–80339 (32 used, 8 free). Dependency on Business Foundation
 (28.4.53241.53312) for No. Series. **Version: `1.2.0.0`** (Minor bumps: `1.0.0.0`→`1.1.0.0`
 after the first 09F batch, `1.1.0.0`→`1.2.0.0` after 09F-13/09F-14 — see ChangeLog). Packages in
 `out/` (never deleted): `IP_Tracking_1.0.0.0.app`, `IP_Tracking_1.1.0.0.app`,
 `IP_Tracking_1.2.0.0.app`.
 
-**Object count:** 30 (3 enums, 5 tables, 9 UI pages, 2 ListParts, 4 API pages, 1 tableextension,
-4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
+**Object count:** 32 (3 enums, 5 tables, 10 UI pages, 2 catalog pages, 2 ListParts, 4 API pages,
+1 tableextension, 4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
 
 **Build status:** `./scripts/build.sh` → 0 errors, 0 warnings, 4 pre-accepted info (`AW0006` on
 Card pages, SC-07). Verify this is still true before trusting anything below — it may have
@@ -99,6 +99,10 @@ raises or owns a decision.*
 - 2026-09-05 — AJ asked why `Packaging.md` still showed `DSW` (created 2026-09-04, before the
   09F-05 rename, never updated — confirmed via git history, not a bug). Added a "superseded,
   see this file" banner to all four point-in-time records rather than editing their history.
+- 2026-09-05 — 09F-13's first fix didn't work in real testing. Checked Base App's actual
+  "Item Vendor Catalog" symbols rather than guess again: the missing piece was no `CardPageId`
+  + a hidden linking field on a *dedicated* target page, not a trigger on the shared list. Added
+  pages 80328/80329, retargeted all four cross-reference actions. 32 objects now.
 
 ## Next
 

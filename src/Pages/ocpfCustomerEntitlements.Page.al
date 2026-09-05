@@ -1,12 +1,10 @@
 namespace OnlyCopilotFans.IPTracking;
 
-page 80313 "ocpf IP Entitlements"
+page 80329 "ocpf Customer Entitlements"
 {
     PageType = List;
     ApplicationArea = All;
-    UsageCategory = Lists;
     SourceTable = "ocpf IP Entitlement";
-    CardPageId = "ocpf IP Entitlement Card";
     Caption = 'IP Entitlements';
 
     layout
@@ -15,21 +13,11 @@ page 80313 "ocpf IP Entitlements"
         {
             repeater(Group)
             {
-                field("No."; Rec."No.")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the IP Entitlement number.';
-                    Editable = false;
-                }
                 field("Customer No."; Rec."Customer No.")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the number of the customer who holds this entitlement.';
-                }
-                field("Customer Name"; Rec."Customer Name")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the name of the customer who holds this entitlement.';
+                    Visible = false;
                 }
                 field("IP App Code"; Rec."IP App Code")
                 {
@@ -74,4 +62,13 @@ page 80313 "ocpf IP Entitlements"
             }
         }
     }
+
+    trigger OnNewRecord(BelowxRec: Boolean)
+    var
+        CustomerNoFilter: Text;
+    begin
+        CustomerNoFilter := Rec.GetFilter("Customer No.");
+        if CustomerNoFilter <> '' then
+            Rec.Validate("Customer No.", CopyStr(CustomerNoFilter, 1, MaxStrLen(Rec."Customer No.")));
+    end;
 }

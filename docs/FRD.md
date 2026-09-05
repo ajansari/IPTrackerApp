@@ -104,7 +104,7 @@ also hosts an Editions ListPart and a Prices ListPart, plus an "Entitlements" na
 - `Expiration Date` (Date) — suggested as Date of Purchase + 1M/1Y/3Y on validation of Date of Purchase or Billing Period; user-editable. Does not fire while Billing Period is blank. A lapsed entitlement is one whose Expiration Date is in the past (there is no "Expired" status value).
 - `License Type` (FlowField from IP App). `Unit Price` — **not a FlowField (changed 2026-09-05, 09F-11)**: a real, user-editable field auto-suggested from IP App Price (App + Edition + Billing Period + blank Currency) once all three are known, and never overwritten once it holds a non-zero value.
 - `License Key` (Text80, new 2026-09-05, 09F-14) — plain field, entered manually today. A generator for it is on the roadmap (R-4), details not yet decided.
-- **Defect fixed (09F-13):** creating a new Entitlement from the IP App or Customer cross-reference actions (§7.8) now presets the filtered field (IP App Code or Customer No.) on the new record — previously it didn't, so the new record fell outside the filter it was created under and appeared to fail.
+- **Defect fixed (09F-13, revised):** creating a new Entitlement from the IP App or Customer cross-reference actions (§7.8) fell outside the filter it was created under. First attempted fix (a trigger on the shared general list) did not actually resolve it in testing. Fixed properly by mirroring Base App's real "Item Vendor Catalog" pattern — two dedicated, Card-less catalog pages, each hiding its own linking field.
 
 **Billing Period default ripple (explicit decision, 2026-09-05):** the blank default added for
 "Default Billing Period" (§7.1) is on a *shared* enum, so it also changed the default for this
@@ -128,11 +128,16 @@ alternative (keep Price/Entitlement defaulting to Monthly) was offered and decli
   `Item` table via `tableextension`, surfaced on Item Card and Item List via `pageextension`.
 - **Optional** — not every item has an IP association; blank is valid.
 
-### 7.8 Cross-reference navigation (new 2026-09-05, 09F-08)
-- IP App List/Card → "Entitlements" action, filtered by IP App Code.
-- Customer Card/List → "IP Entitlements" action (via `pageextension`), filtered by Customer No.
-- Modeled on BC's own Item↔Vendor "Item Vendor Catalog" pattern, per direct request — an action
-  opening a filtered list, not a FactBox.
+### 7.8 Cross-reference navigation (new 2026-09-05, 09F-08; revised 09F-13 §2)
+- IP App List/Card → "Entitlements" action → dedicated page `ocpf IP App Entitlements`, filtered
+  by IP App Code (hidden on that page).
+- Customer Card/List → "IP Entitlements" action → dedicated page `ocpf Customer Entitlements`,
+  filtered by Customer No. (hidden on that page).
+- Modeled on BC's own Item↔Vendor "Item Vendor Catalog" pattern, per direct request — verified
+  against the actual Base App symbols, not assumed: `RunObject`/`RunPageLink` on the action (as
+  originally built), **plus a dedicated target page with no Card and the linking field hidden**
+  (not initially built — added in 09F-13 §2 once the first attempt proved insufficient in
+  testing). An action opening a filtered, inline-editable list, not a FactBox.
 
 ## 8. Non-functional requirements
 - Compiles with **0 errors / 0 warnings** (warnings treated as errors).

@@ -559,6 +559,39 @@ leaving `ChangeLog.md`'s own historical `DSW` mentions alone).
 **Updated:** none of TDD/FRD — this is a documentation-hygiene fix, not a design change.
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
 
+## Issue 09F-13 (revised) — first fix insufficient; corrected by mirroring Base App exactly
+
+**Problem:** AJ reported the 09F-13 fix from the previous session "still broken in v1.2.0.0,"
+from both the IP App side and the Customer side, and asked for it to be implemented like Base
+App's real "Item Vendor Catalog." The original fix — an `OnNewRecord` trigger on the shared
+general list (page 80313) reading `Rec.GetFilter` — did not resolve the defect in practice.
+**Root cause (found by checking the actual symbols, not guessing further):** `Microsoft_Base
+Application`'s real Item Card action is:
+```
+Ven&dors { RunObject = 'Item Vendor Catalog'; RunPageLink = '"Item No." = field("No.")';
+           RunPageView = 'sorting("Item No.")'; }
+```
+— the same `RunObject`/`RunPageLink` mechanism this project already used; that part was never
+wrong. The actual difference: the target page ("Item Vendor Catalog") has **no `CardPageId`** —
+new records are created and edited **inline**, never navigating to a separate Card page — and
+the linking field (`"Item No."`) is simply **hidden** (`Visible = false`). Our shared target
+page (80313) kept its `CardPageId`, routing "New" through a *separate* Card page object, which
+broke the filter-to-default behavior the first fix relied on.
+**Resolution:** Two new dedicated catalog pages, mirroring the verified pattern exactly:
+- `page 80328 "ocpf IP App Entitlements"` — List, no `CardPageId`, `"IP App Code"` hidden. New
+  target of the "Entitlements" action on 80307/80308.
+- `page 80329 "ocpf Customer Entitlements"` — List, no `CardPageId`, `"Customer No."` hidden.
+  New target of the "IP Entitlements" action on 80326/80327.
+Both retain an `OnNewRecord`/`GetFilter` trigger for their one relevant field as
+defense-in-depth — cheap and harmless — but the structural fix (no Card, field hidden) is what
+actually matches the proven pattern. All four actions gained `RunPageView = sorting(...)`,
+matching Base App. The general list (80313) is unchanged for its own direct/Tell-Me entry point;
+its now-unnecessary `OnNewRecord` was removed since it's no longer a `RunPageLink` target.
+**Files affected:** `src/Pages/ocpfIPAppEntitlements.Page.al` (new), `src/Pages/ocpfCustomerEntitlements.Page.al` (new), `src/Pages/ocpfIPEntitlements.Page.al` (trigger removed), `src/Pages/ocpfIPApps.Page.al`, `src/Pages/ocpfIPAppCard.Page.al`, `src/PageExtensions/ocpfCustomerCard.PageExt.al`, `src/PageExtensions/ocpfCustomerList.PageExt.al` (all four retargeted).
+**Updated:** TDD (§2, §7.4 rule R-5 rewritten, §8.1, §8.3) and FRD (§7.4, §7.8) — yes.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, 6 pre-accepted info (2 new `AW0006`
+on the catalog pages — expected, they have no `UsageCategory`, matching Base App's own pages).
+
 ---
 
 ## Batch deviations

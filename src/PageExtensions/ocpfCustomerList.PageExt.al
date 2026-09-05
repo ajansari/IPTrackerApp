@@ -14,8 +14,9 @@ pageextension 80327 "ocpf Customer List" extends "Customer List"
                 Caption = 'IP Entitlements';
                 ToolTip = 'View the IP apps this customer is entitled to.';
                 Image = List;
-                RunObject = page "ocpf IP Entitlements";
+                RunObject = page "ocpf Customer Entitlements";
                 RunPageLink = "Customer No." = field("No.");
+                RunPageView = sorting("Customer No.");
             }
         }
     }

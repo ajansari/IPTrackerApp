@@ -34,13 +34,15 @@ Allocated range: **80300–80339**. Never allocate outside it.
 | 80325 | pageextension | ocpf Item List | IP Tracking | Item List (31) | R/W | 4 (feedback) | Built |
 | 80326 | pageextension | ocpf Customer Card | IP Tracking | Customer Card (21) | — (action only) | 4 (feedback) | Built |
 | 80327 | pageextension | ocpf Customer List | IP Tracking | Customer List (22) | — (action only) | 4 (feedback) | Built |
-| 80328–80337 | — | *(free)* | | | | | Buffer (10 IDs) |
+| 80328 | page (List, catalog) | ocpf IP App Entitlements | IP Tracking | ocpf IP Entitlement | R/W | 5 (feedback) | Built |
+| 80329 | page (List, catalog) | ocpf Customer Entitlements | IP Tracking | ocpf IP Entitlement | R/W | 5 (feedback) | Built |
+| 80330–80337 | — | *(free)* | | | | | Buffer (8 IDs) |
 | 80338 | permissionset | OCPF - IP Track Read | IP Tracking | — | — | 2 | Built |
 | 80339 | permissionset | OCPF - IP Track Edit | IP Tracking | — | — | 2 | Built |
 
-Total: **30 objects** (3 enums, 5 tables, 9 UI pages, 2 ListParts, 4 API pages, 1 tableextension,
-4 pageextensions, 2 permission sets). Free: 10 IDs (25% headroom, down from 42% at BUILD-complete
-— the 09F-06/07/08 feedback consumed 7 of the former buffer IDs).
+Total: **32 objects** (3 enums, 5 tables, 10 UI pages, 2 catalog pages, 2 ListParts, 4 API pages,
+1 tableextension, 4 pageextensions, 2 permission sets). Free: 8 IDs (20% headroom — the 09F-13
+catalog-page fix consumed 2 more of the buffer).
 
 *Field-removal note: `ocpf IP App Edition` field 4 "Unit Price" was removed (09F-04) — this
 frees a field number, not an object ID; the table's own object ID (80304) is unchanged.*
