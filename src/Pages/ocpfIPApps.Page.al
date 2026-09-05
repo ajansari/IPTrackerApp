@@ -1,12 +1,12 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80307 "ipt IP Apps"
+page 80307 "ocpf IP Apps"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "ipt IP App";
-    CardPageId = "ipt IP App Card";
+    SourceTable = "ocpf IP App";
+    CardPageId = "ocpf IP App Card";
     Caption = 'IP Apps';
 
     layout
@@ -48,4 +48,21 @@ page 80307 "ipt IP Apps"
             }
         }
     }
+
+    actions
+    {
+        area(Navigation)
+        {
+            action(Entitlements)
+            {
+                ApplicationArea = All;
+                Caption = 'Entitlements';
+                ToolTip = 'View the customers entitled to this IP app.';
+                Image = List;
+                RunObject = page "ocpf IP Entitlements";
+                RunPageLink = "IP App Code" = field(Code);
+            }
+        }
+    }
 }
+

@@ -1,12 +1,12 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80309 "ipt IP App Editions"
+page 80309 "ocpf IP App Editions"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "ipt IP App Edition";
-    CardPageId = "ipt IP App Edition Card";
+    SourceTable = "ocpf IP App Edition";
+    CardPageId = "ocpf IP App Edition Card";
     Caption = 'IP App Editions';
 
     layout
@@ -29,11 +29,6 @@ page 80309 "ipt IP App Editions"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description of the edition.';
-                }
-                field("Unit Price"; Rec."Unit Price")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the reference unit price of the edition.';
                 }
             }
         }

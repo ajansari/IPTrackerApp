@@ -24,5 +24,18 @@ Item↔IP App tie to be Item↔Edition instead of Item↔App.
 
 ---
 
+## R-2 — Manual Nos. override for IP Entitlement `No.`
+
+**Source:** ChangeLog Issue 09F-07 (2026-09-05), noticed while implementing.
+
+**Idea:** The current No. Series wiring on `ocpf IP Entitlement."No."` is mandatory-series-only
+— there's no "Manual Nos." escape hatch on `ocpf IP App Setup` the way many BC Setup tables offer
+(a boolean that lets a user type their own number instead of taking the next series value). Not
+requested; flagged as a reasonable, small future refinement if it turns out to matter.
+
+**Status:** Idea only. Not designed, not scheduled.
+
+---
+
 *(Add new items above this line as they come up. Each entry: source, idea, open questions,
 status.)*

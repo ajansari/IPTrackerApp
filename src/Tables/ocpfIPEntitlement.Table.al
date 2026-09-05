@@ -1,20 +1,20 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
+using Microsoft.Foundation.NoSeries;
 using Microsoft.Sales.Customer;
 
-table 80306 "ipt IP Entitlement"
+table 80306 "ocpf IP Entitlement"
 {
     Caption = 'IP Entitlement';
     DataClassification = CustomerContent;
-    LookupPageId = "ipt IP Entitlements";
-    DrillDownPageId = "ipt IP Entitlements";
+    LookupPageId = "ocpf IP Entitlements";
+    DrillDownPageId = "ocpf IP Entitlements";
 
     fields
     {
-        field(1; "Entry No."; Integer)
+        field(1; "No."; Code[20])
         {
-            Caption = 'Entry No.';
-            AutoIncrement = true;
+            Caption = 'No.';
         }
         field(2; "Customer No."; Code[20])
         {
@@ -33,19 +33,19 @@ table 80306 "ipt IP Entitlement"
         {
             Caption = 'IP App Code';
             NotBlank = true;
-            TableRelation = "ipt IP App"."Code";
+            TableRelation = "ocpf IP App"."Code";
         }
         field(5; "Edition Code"; Code[10])
         {
             Caption = 'Edition Code';
             NotBlank = true;
-            TableRelation = "ipt IP App Edition"."Edition Code" where("IP App Code" = field("IP App Code"));
+            TableRelation = "ocpf IP App Edition"."Edition Code" where("IP App Code" = field("IP App Code"));
         }
         field(6; "Description"; Text[80])
         {
             Caption = 'Description';
             FieldClass = FlowField;
-            CalcFormula = lookup("ipt IP App Edition".Description where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code")));
+            CalcFormula = lookup("ocpf IP App Edition".Description where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code")));
             Editable = false;
         }
         field(7; "Date of Purchase"; Date)
@@ -57,12 +57,12 @@ table 80306 "ipt IP Entitlement"
                 Rec.SuggestExpirationDate();
             end;
         }
-        field(8; "Status"; Enum "ipt IP Entitlement Status")
+        field(8; "Status"; Enum "ocpf IP Entitlement Status")
         {
             Caption = 'Status';
             InitValue = Active;
         }
-        field(9; "Billing Period"; Enum "ipt IP Billing Period")
+        field(9; "Billing Period"; Enum "ocpf IP Billing Period")
         {
             Caption = 'Billing Period';
 
@@ -81,25 +81,25 @@ table 80306 "ipt IP Entitlement"
         {
             Caption = 'Expiration Date';
         }
-        field(12; "License Type"; Enum "ipt IP License Type")
+        field(12; "License Type"; Enum "ocpf IP License Type")
         {
             Caption = 'License Type';
             FieldClass = FlowField;
-            CalcFormula = lookup("ipt IP App"."License Type" where("Code" = field("IP App Code")));
+            CalcFormula = lookup("ocpf IP App"."License Type" where("Code" = field("IP App Code")));
             Editable = false;
         }
         field(13; "Unit Price"; Decimal)
         {
             Caption = 'Unit Price';
             FieldClass = FlowField;
-            CalcFormula = lookup("ipt IP App Price"."Unit Price" where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code"), "Billing Period" = field("Billing Period"), "Currency Code" = const('')));
+            CalcFormula = lookup("ocpf IP App Price"."Unit Price" where("IP App Code" = field("IP App Code"), "Edition Code" = field("Edition Code"), "Billing Period" = field("Billing Period"), "Currency Code" = const('')));
             Editable = false;
         }
     }
 
     keys
     {
-        key(PK; "Entry No.")
+        key(PK; "No.")
         {
             Clustered = true;
         }
@@ -107,6 +107,18 @@ table 80306 "ipt IP Entitlement"
         {
         }
     }
+
+    trigger OnInsert()
+    var
+        IPAppSetup: Record "ocpf IP App Setup";
+        NoSeries: Codeunit "No. Series";
+    begin
+        if Rec."No." = '' then begin
+            IPAppSetup.Get();
+            IPAppSetup.TestField("IP Entitlement Nos.");
+            Rec."No." := NoSeries.GetNextNo(IPAppSetup."IP Entitlement Nos.");
+        end;
+    end;
 
     /// <summary>
     /// Rule R-1: suggests "Expiration Date" from "Date of Purchase" + the offset for

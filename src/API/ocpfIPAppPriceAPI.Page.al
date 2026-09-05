@@ -1,15 +1,15 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80316 "ipt IP App Edition API"
+page 80317 "ocpf IP App Price API"
 {
     PageType = API;
-    Caption = 'IP App Edition API';
-    APIPublisher = 'dsw';
-    APIGroup = 'iptIpManagement';
+    Caption = 'IP App Price API';
+    APIPublisher = 'ocpf';
+    APIGroup = 'ocpfIpManagement';
     APIVersion = 'v1.0';
-    EntityName = 'iptIPAppEdition';
-    EntitySetName = 'iptIPAppEditions';
-    SourceTable = "ipt IP App Edition";
+    EntityName = 'ocpfIPAppPrice';
+    EntitySetName = 'ocpfIPAppPrices';
+    SourceTable = "ocpf IP App Price";
     ODataKeyFields = SystemId;
     DelayedInsert = true;
     ApplicationArea = All;
@@ -28,9 +28,13 @@ page 80316 "ipt IP App Edition API"
                 {
                     Caption = 'Edition Code';
                 }
-                field(description; Rec."Description")
+                field(billingPeriod; Rec."Billing Period")
                 {
-                    Caption = 'Description';
+                    Caption = 'Billing Period';
+                }
+                field(currencyCode; Rec."Currency Code")
+                {
+                    Caption = 'Currency Code';
                 }
                 field(unitPrice; Rec."Unit Price")
                 {

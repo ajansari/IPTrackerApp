@@ -1,11 +1,11 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-table 80304 "ipt IP App Edition"
+table 80304 "ocpf IP App Edition"
 {
     Caption = 'IP App Edition';
     DataClassification = CustomerContent;
-    LookupPageId = "ipt IP App Editions";
-    DrillDownPageId = "ipt IP App Editions";
+    LookupPageId = "ocpf IP App Editions";
+    DrillDownPageId = "ocpf IP App Editions";
 
     fields
     {
@@ -13,7 +13,7 @@ table 80304 "ipt IP App Edition"
         {
             Caption = 'IP App Code';
             NotBlank = true;
-            TableRelation = "ipt IP App"."Code";
+            TableRelation = "ocpf IP App"."Code";
         }
         field(2; "Edition Code"; Code[10])
         {
@@ -23,11 +23,6 @@ table 80304 "ipt IP App Edition"
         field(3; "Description"; Text[80])
         {
             Caption = 'Description';
-        }
-        field(4; "Unit Price"; Decimal)
-        {
-            Caption = 'Reference Unit Price';
-            MinValue = 0;
         }
     }
 
@@ -41,8 +36,8 @@ table 80304 "ipt IP App Edition"
 
     trigger OnDelete()
     var
-        IPAppPrice: Record "ipt IP App Price";
-        IPEntitlement: Record "ipt IP Entitlement";
+        IPAppPrice: Record "ocpf IP App Price";
+        IPEntitlement: Record "ocpf IP Entitlement";
         CannotDeleteErr: Label 'You cannot delete Edition %1 %2 because related prices or entitlements exist.', Comment = '%1 = IP App Code, %2 = Edition Code';
     begin
         IPAppPrice.SetRange("IP App Code", Rec."IP App Code");

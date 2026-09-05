@@ -222,5 +222,102 @@ production, not a carried-over default — appropriate for an internal PTE, but 
 
 ---
 
+## Testing feedback batch (2026-09-05) — 09F-01…09F-10
+
+Source: `TestingFeedback.md`, session 2026-09-05. Ten issues: eight from triaged feedback,
+two real defects found by compiling the batch (not by inspection — same discipline as Step 04).
+Generated and compiled as one unit (30 files, not sub-batched) because the rename in 09F-05
+touches every existing file and the new objects in 09F-06/07/08 depend on the renamed ones.
+
+## Issue 09F-01 — License Type enum needed a blank default plus two new values
+**Problem:** `ocpf IP License Type` had no blank/unspecified option and no way to express "Free" or "Free Open Source" licensing.
+**Root cause:** Original enum (TDD §6.1) was scoped from the DEFINE-phase domain vocabulary, which didn't anticipate these needs; only surfaced once a real user tried to enter data.
+**Resolution:** Added `value(0; " ") { Caption = ''; }` as the new default, renumbering Perpetual…PerOther from 0–6 to 1–7, then appended `Free` (8) and `FreeOpenSource` (9). Renumbering existing ordinals is normally forbidden for a published `Extensible` enum (BC convention: only ever append) — safe here only because BUILD had not reached Step 09 publish, so no live data exists against the old ordinals. Verified `value(0; " ")` compiles (an enum value's internal name can't be truly empty, but a single-space quoted identifier with an empty `Caption` does).
+**Files affected:** `src/Enums/ocpfIPLicenseType.Enum.al` (renamed from `iptIPLicenseType.Enum.al`).
+**Updated:** TDD (§6.1) and FRD (§7.1) — yes.
+
+## Issue 09F-02 — "Other" field should only show for License Type = Per Other
+**Problem:** `"Other"` on the IP App Card was always visible, even though it's only meaningful when License Type is Per Other.
+**Root cause:** Not considered at DESIGN time — the field existed and had a tooltip, but no visibility rule was specified.
+**Resolution:** Rule R-2: a page-scoped `Boolean` (`OtherVisible`), recomputed on `OnAfterGetCurrRecord` and on License Type's `OnValidate`, bound via `Visible = OtherVisible`. Table field and API are unaffected — UI-only.
+**Files affected:** `src/Pages/ocpfIPAppCard.Page.al`.
+**Updated:** TDD (§7.1 R-2) and FRD (§7.1) — yes.
+
+## Issue 09F-03 — Default Billing Period needed a blank default
+**Problem:** `"Default Billing Period"` on IP App had no way to leave it unspecified.
+**Root cause:** Same as 09F-01 — surfaced only in testing.
+**Resolution:** Added blank at ordinal 0 to the shared `ocpf IP Billing Period` enum, same renumbering approach and same one-time-exception justification as 09F-01.
+**Ripple (explicit human decision):** the enum is shared by three fields. Offered a choice — keep `IP App Price."Billing Period"` and `IP Entitlement."Billing Period"` defaulting to Monthly via explicit `InitValue`, or let all three default blank. **Decision: let all three default blank.** No `InitValue` added to either field; a new Price row or Entitlement now starts with no Billing Period until the user picks one, which also delays rule R-1 and the Unit Price FlowField lookup.
+**Files affected:** `src/Enums/ocpfIPBillingPeriod.Enum.al`.
+**Updated:** TDD (§6.2, §7.3, §7.4) and FRD (§7.1, §7.3, §7.4) — yes.
+
+## Issue 09F-04 — Remove "Reference Unit Price" from IP App Edition
+**Problem:** `IP App Edition."Unit Price"` (caption "Reference Unit Price") duplicated the pricing matrix (`IP App Price`) without being tied to it — nothing validated the two stayed consistent, recreating the exact ambiguity A-3 tried to resolve by relabeling rather than removing.
+**Root cause:** A-3 (DEFINE-phase) kept both fields to preserve two different requirements found in the original spec at the same grain; in practice only the Prices matrix is ever calculated from, so the Edition-level field was pure UI clutter with a stale-data risk.
+**Resolution:** Removed the field entirely — from the table, its List/Card/ListPart, and the Edition API's `unitPrice`. `IP App Price` is now the sole source of anything price-shaped.
+**Files affected:** `src/Tables/ocpfIPAppEdition.Table.al`, `src/Pages/ocpfIPAppEditions.Page.al`, `src/Pages/ocpfIPAppEditionCard.Page.al`, `src/Pages/ocpfIPAppEditionsPart.Page.al`, `src/API/ocpfIPAppEditionAPI.Page.al`.
+**Updated:** TDD (§7.2, §8.1, §8.2) and FRD (§7.2) — yes.
+
+## Issue 09F-05 — Rename prefix/publisher/namespace: `ipt`/`DSW` → `ocpf`/`OnlyCopilotFans`
+**Problem:** Prefix and publisher no longer matched the actual organization.
+**Root cause:** A-1 set `DSW`/`ipt` from the user's email domain under DEFINE-phase time pressure; corrected once the actual publisher was confirmed.
+**Resolution:** `app.json` publisher → `OnlyCopilotFans`; AL object prefix `ipt`→`ocpf`; permission-set prefix `IPT - `→`OCPF - ` (both new names are exactly 20 chars, the AL0305 boundary — verified by compiling, not measured by eye); `APIPublisher` `'dsw'`→`'ocpf'`, `APIGroup` `'ipt_ipManagement'`/`'iptIpManagement'`→`'ocpfIpManagement'`. **Namespace `DSW.IPTracking`→`OnlyCopilotFans.IPTracking`** — not explicitly requested but caught by the "any other DSW references" audit: leaving the old publisher baked into every object's namespace while the publisher itself changed would have been an inconsistent, incomplete rename. All 23 existing files renamed accordingly (filenames included, per the `<ObjectNameWithoutSpaces>.<Type>.al` convention).
+**Audit result:** zero `DSWi` references found anywhere. All `DSW` references were either the four items just listed (now fixed) or historical mentions inside `ChangeLog.md`/`SanityCheck.md`/`BuildPlan.md`/`GapAnalysis.md` recording past decisions — left untouched, as rewriting dated history would falsify the record.
+**Files affected:** all 23 pre-existing `.al` files (renamed), `app.json`, `scripts/preflight.py` (`PARAM` block).
+**Updated:** TDD (§1.1–§1.4, throughout) and FRD (§7.5, §7.6) — yes.
+
+## Issue 09F-06 — Item ⇄ IP App tie
+**Problem:** No way to associate a sellable Item with an IP App.
+**Root cause:** New requirement, not previously scoped.
+**Resolution:** `tableextension "ocpf Item"` (80323) adds `"IP App"` (Code[10], `TableRelation = "ocpf IP App".Code`, optional — blank is valid, not every item has an IP association) to table 27 Item. `pageextension`s on Item Card (80324, `addlast(Item)`) and Item List (80325, `addlast(Control1)`) surface it. Anchor group/control names (`Item`, `Control1`) confirmed against the Base App symbols before writing the extension — not guessed.
+**Files affected:** `src/TableExtensions/ocpfItem.TableExt.al`, `src/PageExtensions/ocpfItemCard.PageExt.al`, `src/PageExtensions/ocpfItemList.PageExt.al`.
+**Updated:** TDD (§8.3) and FRD (§7.7) — yes.
+
+## Issue 09F-07 — IP Entitlement `Entry No.` → `No.` (Code20, No. Series) + new IP App Setup table/page
+**Problem:** `"Entry No."` (autoincrement Integer) wasn't the preferred key design; needed to become a No. Series-driven `"No."` (Code20), which in turn requires a Setup table to hold the series code.
+**Root cause:** A-4 (DEFINE-phase) deliberately deferred a Setup table/number series for the *whole app* to avoid that dependency in the first cut. This request scopes it down to just the one field that needs it, rather than reopening A-4 wholesale.
+**Resolution:**
+- Verified the **current, non-deprecated** No. Series implementation against the Business Foundation symbols (not assumed): `codeunit "No. Series"` (310) + `table "No. Series"` (308), namespace `Microsoft.Foundation.NoSeries` — replacing the older `NoSeriesManagement`. Exact signature confirmed: `GetNextNo(NoSeriesCode: Code[20]): Code[20]`.
+- Added `app.json` dependency on Business Foundation (Microsoft, `f3552374-a1f2-4356-848e-196002525837`, `28.4.53241.53312`) — referencing a codeunit/table from a module not previously depended on requires a declared dependency, not just resolvable symbols.
+- New `table 80319 "ocpf IP App Setup"` — singleton, PK `"Primary Key"` (Code[10]), matching the convention confirmed against `Sales & Receivables Setup`/`Marketing Setup` (not assumed); one field, `"IP Entitlement Nos."` (Code20, `TableRelation = "No. Series".Code`).
+- New `page 80322 "ocpf IP App Setup"` — Card, `UsageCategory = Administration`, `InsertAllowed/DeleteAllowed = false`, `OnOpenPage` inserts the singleton record if missing (standard Setup-page pattern).
+- `ocpf IP Entitlement`: field 1 renamed `"Entry No."` (Integer, AutoIncrement) → `"No."` (Code[20]); `OnInsert` trigger assigns it via `NoSeries.GetNextNo(IPAppSetup."IP Entitlement Nos.")` when blank; PK key renamed to match. Minimal-viable pattern — mandatory series, no "Manual Nos." override (candidate for `Roadmap.md`, not built).
+- Both permission sets extended to cover the new Setup table (`PerTenantExtensionCop`'s `PTE0004` requires it — confirmed by compiling, not assumed).
+- Renamed throughout: pages 80313/80314 (column/field `No.`, `Editable = false`), API 80318 (`entryNo`→`no`).
+**Files affected:** `src/Tables/ocpfIPAppSetup.Table.al` (new), `src/Pages/ocpfIPAppSetup.Page.al` (new), `src/Tables/ocpfIPEntitlement.Table.al`, `src/Pages/ocpfIPEntitlements.Page.al`, `src/Pages/ocpfIPEntitlementCard.Page.al`, `src/API/ocpfIPEntitlementAPI.Page.al`, `src/PermissionSets/OCPFIPTrackRead.PermissionSet.al`, `src/PermissionSets/OCPFIPTrackEdit.PermissionSet.al`, `app.json`.
+**Updated:** TDD (§1.4, §2, §7.4 R-3, §8.1, §8.2, §9) and FRD (§1 "out of scope", §7.4, §7.6) — yes.
+
+## Issue 09F-08 — Entitlement lookup from IP App and Customer pages
+**Problem:** No way to see, from an IP App or a Customer, which of the other side it's associated with — analogous to BC's Item↔Vendor "Item Vendor Catalog" pattern, per direct request.
+**Root cause:** New requirement, not previously scoped.
+**Resolution:** IP App List (80307) and Card (80308) — own pages, edited directly — each gain an `action(Entitlements)` under `area(Navigation)`, `RunObject = page "ocpf IP Entitlements"`, `RunPageLink = "IP App Code" = field(Code)`. Customer Card (80326) and List (80327) — base-app pages, via `pageextension` — each gain an `action("IP Entitlements")` the same way, `RunPageLink = "Customer No." = field("No.")`. `addlast(Navigation)` targets the page's `area(Navigation)` directly rather than naming one of the base page's existing action groups — a more stable anchor across BC versions.
+**Files affected:** `src/Pages/ocpfIPApps.Page.al`, `src/Pages/ocpfIPAppCard.Page.al`, `src/PageExtensions/ocpfCustomerCard.PageExt.al` (new), `src/PageExtensions/ocpfCustomerList.PageExt.al` (new).
+**Updated:** TDD (§8.1, §8.3, §10) and FRD (§7.8) — yes.
+
+## Issue 09F-09 — Page extensions failed to resolve their base page (found by compiling)
+**Problem:** All four new page extensions (Item Card/List, Customer Card/List) failed with `AL0247: The target Page '<Name>' for the extension object is not found`, cascading into `AL0118`/`AL0186` on `Rec`.
+**Root cause:** The base pages (Item Card, Item List, Customer Card, Customer List) carry no namespace prefix themselves, which is easy to mistake for "no `using` needed." In fact the extension still needs `using Microsoft.Inventory.Item;` / `using Microsoft.Sales.Customer;` to resolve the target — an easy trap, not caught by pre-flight (which doesn't model extension-target resolution) and only found by the actual compile.
+**Resolution:** Added the missing `using` directive to all four files. Written into TDD §4 as an explicit warning for future extension objects.
+**Files affected:** `src/PageExtensions/ocpfItemCard.PageExt.al`, `src/PageExtensions/ocpfItemList.PageExt.al`, `src/PageExtensions/ocpfCustomerCard.PageExt.al`, `src/PageExtensions/ocpfCustomerList.PageExt.al`.
+**Updated:** TDD (§4, §12) — yes.
+
+## Issue 09F-10 — `Image = Entity` is not a valid action image (found by compiling)
+**Problem:** `warning AL0482: The image Entity is not valid in this context` on all four new navigation actions.
+**Root cause:** Assumed `Entity` was a valid `PageActionImage` value without checking; it either doesn't exist or isn't valid for this control type in this AL version.
+**Resolution:** Changed to `Image = List` (a well-established, always-valid choice for a "view related records" action) on all four. Written into the TDD §5.4 extension template so future actions default to a known-good image.
+**Files affected:** `src/Pages/ocpfIPApps.Page.al`, `src/Pages/ocpfIPAppCard.Page.al`, `src/PageExtensions/ocpfCustomerCard.PageExt.al`, `src/PageExtensions/ocpfCustomerList.PageExt.al`.
+**Updated:** TDD (§5.4) — yes.
+
+**Final verification:** `scripts/preflight.py` (26 rules, extended to recognize `tableextension`/
+`pageextension` as distinct kinds — see Note below) → 0 failures across 30 files.
+`scripts/build.sh` → **0 errors / 0 warnings**, 4 pre-accepted info (unchanged `AW0006`).
+
+**Note — pre-flight tooling gap found and fixed:** `scripts/preflight.py`'s object-declaration
+regex and `OBJ_KINDS` map didn't distinguish `tableextension`/`pageextension` from `table`/`page`,
+which would have made rule FILE-01 expect the wrong filename suffix (`.Table.al` instead of
+`.TableExt.al`). Fixed before running pre-flight on this batch, not after a false failure.
+
+---
+
 ## Batch deviations
-*(none yet — BUILD not started)*
+*(none — see individual batch/issue entries above; every deviation is logged at the point it occurred)*

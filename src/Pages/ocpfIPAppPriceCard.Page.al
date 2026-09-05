@@ -1,18 +1,23 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80321 "ipt IP App Prices Part"
+page 80312 "ocpf IP App Price Card"
 {
-    PageType = ListPart;
+    PageType = Card;
     ApplicationArea = All;
-    SourceTable = "ipt IP App Price";
-    Caption = 'Prices';
+    SourceTable = "ocpf IP App Price";
+    Caption = 'IP App Price Card';
 
     layout
     {
         area(Content)
         {
-            repeater(Group)
+            group(General)
             {
+                field("IP App Code"; Rec."IP App Code")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the code that identifies the IP app this price applies to.';
+                }
                 field("Edition Code"; Rec."Edition Code")
                 {
                     ApplicationArea = All;

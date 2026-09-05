@@ -1,6 +1,6 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-enum 80302 "ipt IP Entitlement Status"
+enum 80302 "ocpf IP Entitlement Status"
 {
     Extensible = true;
 

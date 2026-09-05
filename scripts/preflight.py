@@ -18,13 +18,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ---------------------------------------------------------------- Parameters
 # Derived from TDD §1 (Project Parameters). Never hardcode elsewhere.
 PARAM = {
-    "namespace":      "DSW.IPTracking",
-    "object_prefix":  "ipt ",
-    "permset_prefix": "IPT - ",
+    "namespace":      "OnlyCopilotFans.IPTracking",
+    "object_prefix":  "ocpf ",
+    "permset_prefix": "OCPF - ",
     "id_from":        80300,
     "id_to":          80339,
-    "api_publisher":  "dsw",
-    "api_group":      "iptIpManagement",
+    "api_publisher":  "ocpf",
+    "api_group":      "ocpfIpManagement",
     "api_version":    "v1.0",
     "localization":   "W1",
 }
@@ -34,7 +34,9 @@ MAX_IDENT_PERMSET = 20  # SC-01: permissionset identifiers cap at 20, not 30 (AL
 OBJ_KINDS = {"enum": "Enum", "table": "Table", "page": "Page",
              "codeunit": "Codeunit", "permissionset": "PermissionSet",
              "query": "Query", "report": "Report", "xmlport": "XmlPort",
-             "interface": "Interface"}
+             "interface": "Interface", "tableextension": "TableExt",
+             "pageextension": "PageExt", "reportextension": "ReportExt",
+             "enumextension": "EnumExt"}
 
 RESERVED = {
     "and","array","asserterror","begin","break","case","codeunit","const","div","do","downto",
@@ -125,8 +127,9 @@ RULES = {
 
 # -------------------------------------------------------------------- Checks
 DECL_RE = re.compile(
-    r'^(?P<kind>enum|table|page|codeunit|permissionset|query|report|xmlport|interface)'
-    r'(?:extension)?\s+(?P<id>\d+)\s+(?P<name>"[^"]+"|\w+)', re.M)
+    r'^(?P<kind>tableextension|pageextension|reportextension|enumextension|'
+    r'enum|table|page|codeunit|permissionset|query|report|xmlport|interface)'
+    r'\s+(?P<id>\d+)\s+(?P<name>"[^"]+"|\w+)', re.M)
 FIELD_RE = re.compile(r'^\s{8}field\((?P<num>\w+);\s*(?P<name>"[^"]+"|\w+);', re.M)
 # Must not require the declaration to end the line: `field(x; Rec.x) { ... }` on one line
 # is legal AL and an end-anchored pattern skips it, silently passing an untooltipped field.

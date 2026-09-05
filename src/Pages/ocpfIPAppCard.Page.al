@@ -1,10 +1,10 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80308 "ipt IP App Card"
+page 80308 "ocpf IP App Card"
 {
     PageType = Card;
     ApplicationArea = All;
-    SourceTable = "ipt IP App";
+    SourceTable = "ocpf IP App";
     Caption = 'IP App Card';
 
     layout
@@ -27,11 +27,17 @@ page 80308 "ipt IP App Card"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies how this IP app is licensed.';
+
+                    trigger OnValidate()
+                    begin
+                        UpdateOtherVisible();
+                    end;
                 }
                 field("Other"; Rec."Other")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Define what Other is, e.g. Salesforce, Ticket, etc.';
+                    Visible = OtherVisible;
                 }
                 field("Default Billing Period"; Rec."Default Billing Period")
                 {
@@ -44,13 +50,13 @@ page 80308 "ipt IP App Card"
                     ToolTip = 'Specifies the edition proposed by default for this IP app.';
                 }
             }
-            part(Editions; "ipt IP App Editions Part")
+            part(Editions; "ocpf IP App Editions Part")
             {
                 ApplicationArea = All;
                 Caption = 'Editions';
                 SubPageLink = "IP App Code" = field("Code");
             }
-            part(Prices; "ipt IP App Prices Part")
+            part(Prices; "ocpf IP App Prices Part")
             {
                 ApplicationArea = All;
                 Caption = 'Prices';
@@ -58,4 +64,33 @@ page 80308 "ipt IP App Card"
             }
         }
     }
+
+    actions
+    {
+        area(Navigation)
+        {
+            action(Entitlements)
+            {
+                ApplicationArea = All;
+                Caption = 'Entitlements';
+                ToolTip = 'View the customers entitled to this IP app.';
+                Image = List;
+                RunObject = page "ocpf IP Entitlements";
+                RunPageLink = "IP App Code" = field(Code);
+            }
+        }
+    }
+
+    trigger OnAfterGetCurrRecord()
+    begin
+        UpdateOtherVisible();
+    end;
+
+    var
+        OtherVisible: Boolean;
+
+    local procedure UpdateOtherVisible()
+    begin
+        OtherVisible := Rec."License Type" = Rec."License Type"::PerOther;
+    end;
 }

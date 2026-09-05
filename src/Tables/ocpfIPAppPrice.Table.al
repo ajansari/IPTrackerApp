@@ -1,13 +1,13 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
 using Microsoft.Finance.Currency;
 
-table 80305 "ipt IP App Price"
+table 80305 "ocpf IP App Price"
 {
     Caption = 'IP App Price';
     DataClassification = CustomerContent;
-    LookupPageId = "ipt IP App Prices";
-    DrillDownPageId = "ipt IP App Prices";
+    LookupPageId = "ocpf IP App Prices";
+    DrillDownPageId = "ocpf IP App Prices";
 
     fields
     {
@@ -15,15 +15,15 @@ table 80305 "ipt IP App Price"
         {
             Caption = 'IP App Code';
             NotBlank = true;
-            TableRelation = "ipt IP App"."Code";
+            TableRelation = "ocpf IP App"."Code";
         }
         field(2; "Edition Code"; Code[10])
         {
             Caption = 'Edition Code';
             NotBlank = true;
-            TableRelation = "ipt IP App Edition"."Edition Code" where("IP App Code" = field("IP App Code"));
+            TableRelation = "ocpf IP App Edition"."Edition Code" where("IP App Code" = field("IP App Code"));
         }
-        field(3; "Billing Period"; Enum "ipt IP Billing Period")
+        field(3; "Billing Period"; Enum "ocpf IP Billing Period")
         {
             Caption = 'Billing Period';
         }

@@ -1,15 +1,15 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80318 "ipt IP Entitlement API"
+page 80318 "ocpf IP Entitlement API"
 {
     PageType = API;
     Caption = 'IP Entitlement API';
-    APIPublisher = 'dsw';
-    APIGroup = 'iptIpManagement';
+    APIPublisher = 'ocpf';
+    APIGroup = 'ocpfIpManagement';
     APIVersion = 'v1.0';
-    EntityName = 'iptIPEntitlement';
-    EntitySetName = 'iptIPEntitlements';
-    SourceTable = "ipt IP Entitlement";
+    EntityName = 'ocpfIPEntitlement';
+    EntitySetName = 'ocpfIPEntitlements';
+    SourceTable = "ocpf IP Entitlement";
     ODataKeyFields = SystemId;
     DelayedInsert = true;
     ApplicationArea = All;
@@ -20,9 +20,10 @@ page 80318 "ipt IP Entitlement API"
         {
             repeater(Group)
             {
-                field(entryNo; Rec."Entry No.")
+                field(no; Rec."No.")
                 {
-                    Caption = 'Entry No.';
+                    Caption = 'No.';
+                    Editable = false;
                 }
                 field(customerNo; Rec."Customer No.")
                 {

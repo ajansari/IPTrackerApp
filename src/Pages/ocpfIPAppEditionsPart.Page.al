@@ -1,10 +1,10 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80320 "ipt IP App Editions Part"
+page 80320 "ocpf IP App Editions Part"
 {
     PageType = ListPart;
     ApplicationArea = All;
-    SourceTable = "ipt IP App Edition";
+    SourceTable = "ocpf IP App Edition";
     Caption = 'Editions';
 
     layout
@@ -22,11 +22,6 @@ page 80320 "ipt IP App Editions Part"
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the description of the edition.';
-                }
-                field("Unit Price"; Rec."Unit Price")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the reference unit price of the edition.';
                 }
             }
         }

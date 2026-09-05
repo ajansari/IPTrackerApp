@@ -1,7 +1,7 @@
 {
   "id": "8bf69fdd-4440-48d7-b7b4-7608ac2e9266",
   "name": "IP Tracking",
-  "publisher": "DSW",
+  "publisher": "OnlyCopilotFans",
   "version": "1.0.0.0",
   "brief": "Track licensed IP apps, editions, pricing and customer entitlements.",
   "description": "Per-tenant extension that records the company's intellectual-property software assets, their editions and prices, and which customers hold which app/edition. UI (List/Card) plus v1.0 API.",
@@ -10,7 +10,14 @@
   "help": "",
   "url": "",
   "logo": "",
-  "dependencies": [],
+  "dependencies": [
+    {
+      "id": "f3552374-a1f2-4356-848e-196002525837",
+      "publisher": "Microsoft",
+      "name": "Business Foundation",
+      "version": "28.4.53241.53312"
+    }
+  ],
   "screenshots": [],
   "platform": "28.0.0.0",
   "application": "28.0.0.0",

@@ -1,11 +1,11 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-table 80303 "ipt IP App"
+table 80303 "ocpf IP App"
 {
     Caption = 'IP App';
     DataClassification = CustomerContent;
-    LookupPageId = "ipt IP Apps";
-    DrillDownPageId = "ipt IP Apps";
+    LookupPageId = "ocpf IP Apps";
+    DrillDownPageId = "ocpf IP Apps";
 
     fields
     {
@@ -18,7 +18,7 @@ table 80303 "ipt IP App"
         {
             Caption = 'Description';
         }
-        field(3; "License Type"; Enum "ipt IP License Type")
+        field(3; "License Type"; Enum "ocpf IP License Type")
         {
             Caption = 'License Type';
         }
@@ -26,20 +26,20 @@ table 80303 "ipt IP App"
         {
             Caption = 'Other';
         }
-        field(5; "Default Billing Period"; Enum "ipt IP Billing Period")
+        field(5; "Default Billing Period"; Enum "ocpf IP Billing Period")
         {
             Caption = 'Default Billing Period';
         }
         field(6; "Default Edition Code"; Code[10])
         {
             Caption = 'Default Edition Code';
-            TableRelation = "ipt IP App Edition"."Edition Code" where("IP App Code" = field("Code"));
+            TableRelation = "ocpf IP App Edition"."Edition Code" where("IP App Code" = field("Code"));
         }
         field(10; "Edition Count"; Integer)
         {
             Caption = 'Edition Count';
             FieldClass = FlowField;
-            CalcFormula = count("ipt IP App Edition" where("IP App Code" = field("Code")));
+            CalcFormula = count("ocpf IP App Edition" where("IP App Code" = field("Code")));
             Editable = false;
         }
     }
@@ -54,9 +54,9 @@ table 80303 "ipt IP App"
 
     trigger OnDelete()
     var
-        IPAppEdition: Record "ipt IP App Edition";
-        IPAppPrice: Record "ipt IP App Price";
-        IPEntitlement: Record "ipt IP Entitlement";
+        IPAppEdition: Record "ocpf IP App Edition";
+        IPAppPrice: Record "ocpf IP App Price";
+        IPEntitlement: Record "ocpf IP Entitlement";
         CannotDeleteErr: Label 'You cannot delete IP App %1 because related editions, prices or entitlements exist.', Comment = '%1 = IP App Code';
     begin
         IPAppEdition.SetRange("IP App Code", Rec."Code");

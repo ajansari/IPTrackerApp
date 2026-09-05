@@ -1,6 +1,6 @@
 # Functional Requirements Document — IP Tracking
 
-*Runbook phase: DESIGN / Step 02. Status: **Step 04 sanity check passed; resolutions applied and signed off 2026-09-04**.*
+*Runbook phase: DESIGN / Step 02. Status: **Step 04 sanity check passed (2026-09-04); testing-feedback batch 09F-01…09F-08 applied (2026-09-05) — see `ChangeLog.md` and `TestingFeedback.md`**.*
 *Companion: `BC_App_Build_Routine_Agent.md`. Detailed rules: `AL_PTE_Development_Standards_UNIFIED.md` (not present in repo — inline runbook summaries used).*
 
 ---
@@ -10,8 +10,14 @@ Provide a Business Central Per-Tenant Extension that records the IP software pro
 company licenses, their editions and prices, and the register of which customers hold which
 product/edition. Deliver both an in-client UI (List + Card) and a v1.0 API surface.
 
-**Out of scope:** billing/posting, currency conversion, number series, module setup table,
-renewal automation, usage metering, workflow. (See ProblemStatement "Out of scope".)
+**Out of scope:** billing/posting, currency conversion, renewal automation, usage metering,
+workflow. (See ProblemStatement "Out of scope".)
+
+**Revised 2026-09-05:** a module Setup table and No. Series were originally deferred (A-4) but
+are now in scope, added by testing feedback (09F-07) — the IP Entitlement `No.` is now
+series-driven, requiring `ocpf IP App Setup`. A-4's reasoning ("avoid a Setup object + number-
+series dependency in the first cut") is superseded for this one field; `Code` fields on IP App /
+IP App Edition remain manual entry.
 
 ## 2. Business objectives & value
 - One authoritative catalogue of licensed IP assets and their commercial terms.
@@ -35,6 +41,7 @@ renewal automation, usage metering, workflow. (See ProblemStatement "Out of scop
 | Localization | W1 |
 | Feature flags | `NoImplicitWith` (enforced) |
 | Symbol source | Base Application 28.4.53241.54031 (in `.alpackages`) |
+| Dependency (added 2026-09-05) | Business Foundation (Microsoft, 28.4.53241.53312) — No. Series |
 
 ## 5. Design rules (non-negotiable)
 1. Every name, ID, prefix, version and quoting decision derives from the TDD's System Identity block (copied from the intake sheet). Nothing hardcoded.
@@ -46,59 +53,84 @@ renewal automation, usage metering, workflow. (See ProblemStatement "Out of scop
 7. Referential integrity: deleting a parent that has children is blocked with a clean error.
 
 ## 6. Entity / object inventory
+*Revised 2026-09-05 — rows 10–11 added, row 5 enum values expanded (09F-01, 09F-07).*
+
 | # | Entity | Type | Source | R/W | Notes |
 |---|---|---|---|---|---|
 | 1 | IP App | Master table (new) | new | R/W | Product header |
-| 2 | IP App Edition | Master table (new) | new | R/W | Editions per IP App; PK = App + Edition |
+| 2 | IP App Edition | Master table (new) | new | R/W | Editions per IP App; PK = App + Edition; no longer carries a price (09F-04) |
 | 3 | IP App Price | Setup/rate table (new) | new | R/W | Price per App + Edition + Billing Period + Currency |
-| 4 | IP Entitlement | Document/register table (new) | new | R/W | Customer holds App/Edition; Service-Item analogue |
-| 5 | IP License Type | Enum (new) | new | — | Perpetual, Fixed Price per Period, Per User, Per Company, Per Environment, Per Tenant, Per Other |
-| 6 | IP Billing Period | Enum (new) | new | — | Monthly, Annual, Triennial |
+| 4 | IP Entitlement | Document/register table (new) | new | R/W | Customer holds App/Edition; Service-Item analogue; key field is now `No.` (No. Series), not an autoincrement Entry No. |
+| 5 | IP License Type | Enum (new) | new | — | *(blank, default)*, Perpetual, Fixed Price per Period, Per User, Per Company, Per Environment, Per Tenant, Per Other, Free, Free Open Source |
+| 6 | IP Billing Period | Enum (new) | new | — | *(blank, default)*, Monthly, Annual, Triennial |
 | 7 | IP Entitlement Status | Enum (new) | new | — | Gratis, Active, Demo |
-| 8 | Customer | Standard table 18 | BC | R (lookup) | Referenced by IP Entitlement |
+| 8 | Customer | Standard table 18 | BC | R (lookup) | Referenced by IP Entitlement; now also carries an "IP Entitlements" navigation action (09F-08) |
 | 9 | Currency | Standard table 4 | BC | R (lookup) | Referenced by IP App Price (blank = LCY) |
+| 10 | Item | Standard table 27 | BC | R/W (extension field only) | New field "IP App" ties an item to an IP App; optional (09F-06) |
+| 11 | IP App Setup | Setup table (new) | new | R/W | Holds the No. Series code for IP Entitlement `No.` (09F-07) |
 
 Each of tables 1–4 gets: a **List** page, a **Card** page, and an **API** page. IP App Card
-also hosts an Editions ListPart and a Prices ListPart.
+also hosts an Editions ListPart and a Prices ListPart, plus an "Entitlements" navigation action
+(as does the IP Apps list). IP App Setup gets a singleton Card page.
 
 ## 7. Functional requirements
 
 ### 7.1 IP App
 - Key `Code` (Code10, not blank). `Description` (Text250).
-- `License Type` (enum #5). `Other` (Text80) — free text describing "Per Other" (tooltip: *Define what Other is, e.g. Salesforce, Ticket, etc.*).
-- `Default Billing Period` (enum #6) — the period proposed on new prices/entitlements.
+- `License Type` (enum #5, **defaults blank**) — values: *(blank)*, Perpetual, Fixed Price per Period, Per User, Per Company, Per Environment, Per Tenant, Per Other, Free, Free Open Source (09F-01).
+- `Other` (Text80) — free text describing "Per Other" (tooltip: *Define what Other is, e.g. Salesforce, Ticket, etc.*). **Shown on the Card only when License Type = Per Other** (09F-02, rule R-2 in the TDD); the field itself, and the API, are unaffected — this is a UI-visibility rule only.
+- `Default Billing Period` (enum #6, **defaults blank**, 09F-03) — the period proposed on new prices/entitlements.
 - `Default Edition Code` (Code10) — optional pointer to one edition of this app.
 - `Edition Count` — FlowField, count of child editions.
 - Cannot be deleted while editions, prices or entitlements exist.
+- **New:** an "Entitlements" navigation action on both the List and Card, opening IP Entitlements filtered to this app (09F-08).
 
 ### 7.2 IP App Edition
 - Key `IP App Code` + `Edition Code` (both Code10, not blank).
-- `Description` (Text80). `Unit Price` (Decimal ≥ 0) — the edition's reference/list price; pricing basis is implied by the parent IP App's `License Type`.
+- `Description` (Text80).
+- **Removed 2026-09-05 (09F-04): `Unit Price` ("Reference Unit Price").** It duplicated the pricing matrix (§7.3) without being tied to it — nothing validated the two stayed consistent. `IP App Price` is now the only source of anything price-shaped for an edition.
 - Cannot be deleted while prices or entitlements reference it.
 
 ### 7.3 IP App Price (pricing matrix)
-- Key `IP App Code` + `Edition Code` + `Billing Period` + `Currency Code` (Currency Code blank = LCY).
+- Key `IP App Code` + `Edition Code` + `Billing Period` (**defaults blank**, see ripple note below) + `Currency Code` (Currency Code blank = LCY).
 - `Unit Price` (Decimal ≥ 0).
-- This table is the authoritative period-specific price; `IP App Edition."Unit Price"` is the fallback reference when a period is not priced.
+- This table is now the **only** source of price for an app/edition — there is no fallback reference price (09F-04 superseded the old "fallback" language in this section).
 
 ### 7.4 IP Entitlement (customer register)
-- Key `Entry No.` (autoincrement). The same customer may hold the same App/Edition on more than one entry (renewals, multiple environments).
+- Key **`No.`** (Code20, No. Series-driven — renamed from `Entry No.` (autoincrement Integer), 09F-07). The same customer may hold the same App/Edition on more than one entry (renewals, multiple environments). Populated automatically on insert from `ocpf IP App Setup."IP Entitlement Nos."` via the modern `codeunit "No. Series"`; not user-editable.
 - `Customer No.` (Code20 → Customer 18), `Customer Name` (FlowField).
 - `IP App Code` (→ IP App), `Edition Code` (→ IP App Edition, filtered by App), `Description` (FlowField from Edition).
-- `Date of Purchase` (Date). `Status` (enum #7). `Billing Period` (enum #6). `Quantity` (Decimal ≥ 0, default 1).
-- `Expiration Date` (Date) — suggested as Date of Purchase + 1M/1Y/3Y on validation of Date of Purchase or Billing Period; user-editable. A lapsed entitlement is one whose Expiration Date is in the past (there is no "Expired" status value).
+- `Date of Purchase` (Date). `Status` (enum #7). `Billing Period` (enum #6, **defaults blank**). `Quantity` (Decimal ≥ 0, default 1).
+- `Expiration Date` (Date) — suggested as Date of Purchase + 1M/1Y/3Y on validation of Date of Purchase or Billing Period; user-editable. Does not fire while Billing Period is blank. A lapsed entitlement is one whose Expiration Date is in the past (there is no "Expired" status value).
 - `License Type` (FlowField from IP App). `Unit Price` (FlowField lookup from IP App Price on App + Edition + Billing Period + blank Currency).
 
+**Billing Period default ripple (explicit decision, 2026-09-05):** the blank default added for
+"Default Billing Period" (§7.1) is on a *shared* enum, so it also changed the default for this
+field and for IP App Price's Billing Period — all three now start blank rather than Monthly. The
+alternative (keep Price/Entitlement defaulting to Monthly) was offered and declined.
+
 ### 7.5 API surface
-- API group `iptIpManagement`, version `v1.0`, publisher `dsw` — lower camelCase is required by CodeCop `AA0101` (SanityCheck SC-03). Base URL: `/api/dsw/iptIpManagement/v1.0/companies({id})/…`
+- API group `ocpfIpManagement`, version `v1.0`, publisher `ocpf` (renamed from `dsw`/`ipt_ipManagement` per 09F-05 — publisher/prefix change to OnlyCopilotFans/ocpf). Base URL: `/api/ocpf/ocpfIpManagement/v1.0/companies({id})/…`
 - One entity per table 1–4, `ODataKeyFields = SystemId`, all four editable (`DelayedInsert = true`).
 - Field identifiers camelCase; captions/tooltips are self-describing schema for consumers.
+- IP App Edition API loses `unitPrice` (09F-04). IP Entitlement API's `entryNo` becomes `no` (09F-07).
 
 ### 7.6 Permission sets
-- **IPT - IP Track Read** — read on all four tables.
-- **IPT - IP Track Edit** — includes the Read set + insert/modify/delete on all four tables.
-  (Names are 19 chars: `permissionset` identifiers are capped at 20, not 30 — SanityCheck SC-01. Captions remain 'IP Tracking - Read' / 'IP Tracking - Edit'.)
-- Documentation states the base `D365 BASIC` + Customer read permissions consumers also need.
+- **OCPF - IP Track Read** — read on all four app tables **plus IP App Setup** (renamed 2026-09-05, 09F-05/09F-07).
+- **OCPF - IP Track Edit** — includes the Read set + insert/modify/delete on all five tables.
+  (Names are 20 chars — the exact `permissionset` identifier limit. Captions remain 'IP Tracking - Read' / 'IP Tracking - Edit'.)
+- Documentation states the base `D365 BASIC` + Customer read permissions consumers also need. Still open — GA-01/Issue 08-01, deferred to `Deployment.md`.
+
+### 7.7 Item ⇄ IP App tie (new 2026-09-05, 09F-06)
+- New field `"IP App"` (Code[10], `TableRelation = "ocpf IP App".Code`) added to the standard
+  `Item` table via `tableextension`, surfaced on Item Card and Item List via `pageextension`.
+- **Optional** — not every item has an IP association; blank is valid.
+
+### 7.8 Cross-reference navigation (new 2026-09-05, 09F-08)
+- IP App List/Card → "Entitlements" action, filtered by IP App Code.
+- Customer Card/List → "IP Entitlements" action (via `pageextension`), filtered by Customer No.
+- Modeled on BC's own Item↔Vendor "Item Vendor Catalog" pattern, per direct request — an action
+  opening a filtered list, not a FactBox.
 
 ## 8. Non-functional requirements
 - Compiles with **0 errors / 0 warnings** (warnings treated as errors).

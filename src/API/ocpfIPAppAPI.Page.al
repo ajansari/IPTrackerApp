@@ -1,15 +1,15 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80315 "ipt IP App API"
+page 80315 "ocpf IP App API"
 {
     PageType = API;
     Caption = 'IP App API';
-    APIPublisher = 'dsw';
-    APIGroup = 'iptIpManagement';
+    APIPublisher = 'ocpf';
+    APIGroup = 'ocpfIpManagement';
     APIVersion = 'v1.0';
-    EntityName = 'iptIPApp';
-    EntitySetName = 'iptIPApps';
-    SourceTable = "ipt IP App";
+    EntityName = 'ocpfIPApp';
+    EntitySetName = 'ocpfIPApps';
+    SourceTable = "ocpf IP App";
     ODataKeyFields = SystemId;
     DelayedInsert = true;
     ApplicationArea = All;

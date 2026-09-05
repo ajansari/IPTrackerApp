@@ -1,12 +1,12 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80311 "ipt IP App Prices"
+page 80311 "ocpf IP App Prices"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "ipt IP App Price";
-    CardPageId = "ipt IP App Price Card";
+    SourceTable = "ocpf IP App Price";
+    CardPageId = "ocpf IP App Price Card";
     Caption = 'IP App Prices';
 
     layout

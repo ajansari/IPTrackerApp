@@ -1,12 +1,12 @@
-namespace DSW.IPTracking;
+namespace OnlyCopilotFans.IPTracking;
 
-page 80313 "ipt IP Entitlements"
+page 80313 "ocpf IP Entitlements"
 {
     PageType = List;
     ApplicationArea = All;
     UsageCategory = Lists;
-    SourceTable = "ipt IP Entitlement";
-    CardPageId = "ipt IP Entitlement Card";
+    SourceTable = "ocpf IP Entitlement";
+    CardPageId = "ocpf IP Entitlement Card";
     Caption = 'IP Entitlements';
 
     layout
@@ -15,10 +15,11 @@ page 80313 "ipt IP Entitlements"
         {
             repeater(Group)
             {
-                field("Entry No."; Rec."Entry No.")
+                field("No."; Rec."No.")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies the unique entry number of this entitlement.';
+                    ToolTip = 'Specifies the IP Entitlement number.';
+                    Editable = false;
                 }
                 field("Customer No."; Rec."Customer No.")
                 {

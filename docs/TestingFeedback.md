@@ -61,16 +61,17 @@ partial Step 09 (package built, not yet published/tested live).
 |---|---|---|---|
 | 1 | Testing feedback not durably logged | Fixed now | This document; runbook "Testing Feedback Log" section added |
 | 2 | Memory.md not framework-mandated | Confirmed not mandated; framework extended | Runbook "Session Memory" section added |
-| 3 | License Type: add blank (default), Free, Free Open Source | Implement now | ChangeLog Issue 09F-01 |
-| 4 | "Other" conditionally visible on License Type = Per Other | Implement now | ChangeLog Issue 09F-02 |
-| 5 | Default Billing Period: add blank (default) | Implement now | ChangeLog Issue 09F-03 |
-| 6 | Remove Reference Unit Price (table + pages) | Implement now — supersedes the "hold off" from the prior session | ChangeLog Issue 09F-04 |
-| 7 | Rename prefix `ipt`→`ocpf`, publisher `DSW`→`OnlyCopilotFans`; audit other DSW/DSWi refs | Implement now | ChangeLog Issue 09F-05 |
-| 8 | Item ⇄ IP App tie (field on Item table/Card/List) | Implement now | ChangeLog Issue 09F-06 |
-| 9 | Entitlement `Entry No.` → `No.` (Code[20], No. Series-driven) + IP App Setup table/page | Implement now | ChangeLog Issue 09F-07 |
-| 10 | Entitlement lookup from IP App Card/List and Customer Card/List | Implement now | ChangeLog Issue 09F-08 |
-| 11 | Roadmap.md created | Done now | `docs/Roadmap.md` |
+| 3 | License Type: add blank (default), Free, Free Open Source | **Done** | ChangeLog Issue 09F-01 |
+| 4 | "Other" conditionally visible on License Type = Per Other | **Done** | ChangeLog Issue 09F-02 |
+| 5 | Default Billing Period: add blank (default) | **Done** — human chose "let all three [Default Billing Period, IP App Price.Billing Period, IP Entitlement.Billing Period] default blank" when the ripple was flagged | ChangeLog Issue 09F-03 |
+| 6 | Remove Reference Unit Price (table + pages) | **Done** — supersedes the "hold off" from the prior session | ChangeLog Issue 09F-04 |
+| 7 | Rename prefix `ipt`→`ocpf`, publisher `DSW`→`OnlyCopilotFans`; audit other DSW/DSWi refs | **Done** — audit found the namespace `DSW.IPTracking` also needed renaming (not explicitly asked, caught by "any other DSW references") | ChangeLog Issue 09F-05 |
+| 8 | Item ⇄ IP App tie (field on Item table/Card/List) | **Done** | ChangeLog Issue 09F-06 |
+| 9 | Entitlement `Entry No.` → `No.` (Code[20], No. Series-driven) + IP App Setup table/page | **Done** — added a Business Foundation app dependency for the No. Series codeunit | ChangeLog Issue 09F-07 |
+| 10 | Entitlement lookup from IP App Card/List and Customer Card/List | **Done** | ChangeLog Issue 09F-08 |
+| 11 | Roadmap.md created | **Done** | `docs/Roadmap.md` |
 | 12 | Sales Invoice/Order → optional IP Entitlement creation | Scheduled, not built | `docs/Roadmap.md` item R-1 |
 
-Items 3–10 are tracked individually in `ChangeLog.md` once implemented, each linking back to
-this session by date.
+Items 3–10 implemented and compiled as one batch (30 files, 0 errors/0 warnings). Two additional
+defects were found by the compile itself, not requested by the tester — logged as ChangeLog
+Issues 09F-09 (missing `using` on 4 page extensions) and 09F-10 (`Image = Entity` invalid).
