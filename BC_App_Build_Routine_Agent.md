@@ -389,6 +389,35 @@ Every deviation from FRD or TDD — human or agent — is logged **before the ne
 - Every root-cause fix records the diagnosis, not only the patch, so the same class of error cannot recur in a later batch.
 - Commit each batch to version control separately, before the next begins, with a message that references its ChangeLog entries (Standards Appendix C).
 
+## Testing Feedback Log
+
+Human testing and review surfaces real feedback throughout PROVE (and sometimes earlier, on a
+demo) — a list of things to change, in the tester's own words, not yet triaged into decisions.
+This is distinct from both of the above: the ChangeLog records *decisions and reasoning*; the
+Step 09 test-run record captures *automated* green-team/red-team pass/fail. Neither preserves
+what the human actually said before it becomes a summary of what the human said.
+
+- Record every testing/feedback session in `TestingFeedback.md` — date, what was tested, and the
+  tester's findings/requests **verbatim**, before they are triaged.
+- Triage each item explicitly: implement now (its own ChangeLog Issue), schedule for later
+  (`Roadmap.md`), or reject (record why, in the same log).
+- Cross-reference in both directions: the `TestingFeedback.md` entry links to the ChangeLog
+  Issue(s) or Roadmap item(s) it produced, so the raw ask and the eventual decision both remain
+  traceable independently.
+
+## Session Memory (when the executing agent has one)
+
+If the agent running this routine has a persistent, cross-session memory capability, use it as a
+continuity aid — never as a source of truth:
+
+- Maintain one memory entry per project anchoring: current phase/step, the live document set and
+  where each one lives, and any decision awaiting human sign-off.
+- Update it at the close of every step or batch — the same moment the ChangeLog gets its entry.
+- The project's own documents (`TDD`, `FRD`, `ChangeLog`, `ObjectRegister`, `TestingFeedback`,
+  `Roadmap`) remain authoritative. Memory only saves a fresh session from re-deriving context
+  that is already written down; a fact that lives only in memory and nowhere in the documents
+  does not count as recorded.
+
 ---
 
 ## Stage ↔ Step Map
