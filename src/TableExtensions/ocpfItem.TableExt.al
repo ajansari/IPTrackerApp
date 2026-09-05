@@ -11,6 +11,7 @@ tableextension 80323 "ocpf Item" extends Item
             Caption = 'IP App';
             ToolTip = 'Specifies the IP app associated with this item, if any.';
             TableRelation = "ocpf IP App".Code;
+            DataClassification = CustomerContent;
         }
     }
 }

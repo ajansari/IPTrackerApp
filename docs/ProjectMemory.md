@@ -8,8 +8,9 @@ Update at the close of every step or batch. Committed to git like every other do
 
 ## Current state (2026-09-05)
 
-**Phase:** PROVE. BUILD is complete; Step 08 (Gap-Fit) closed; Step 09 partial (packaged, not
-yet published to a live tenant). Two testing-feedback rounds applied on top of BUILD.
+**Phase:** PROVE. BUILD complete; Step 08 (Gap-Fit) closed; **Step 09 published by AJ to
+`v29Sandbox` but its live tests were skipped by instruction — exit gate NOT met** (see ChangeLog);
+**Step 10 (Code Review) complete** — 2 findings, both fixed. Two testing-feedback rounds applied.
 
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
 runtime 17.0, ID range 80300–80339 (32 used, 8 free). Dependency on Business Foundation
@@ -36,6 +37,7 @@ true before trusting anything below — it may have drifted since this file was 
 | `ChangeLog.md` | Every decision, its reasoning, and every defect found + fixed |
 | `TestingFeedback.md` | Raw human testing input, verbatim, before triage |
 | `Roadmap.md` | Deferred/future work — not scheduled, just not lost |
+| `CodeReview.md` | Step 10 findings — point-in-time record |
 | `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs. Each now carries a banner pointing back here |
 
 ## Open decisions awaiting sign-off
@@ -51,9 +53,15 @@ raises or owns a decision.*
 - **Roadmap R-2** — a "Manual Nos." override for IP Entitlement `No.`. Idea only. *(awaiting: AJ)*
 - **GA-01 / Issue 08-01** — consumer permission documentation (`D365 BASIC` + Customer read)
   not yet published as `Deployment.md`. Scheduled for Step 12, not forgotten. *(awaiting: AJ)*
-- **Step 09 remainder** — publish to `v29Sandbox` and run green-team/red-team tests. Needs a
-  live tenant; not done standalone. Also unresolved: whether `v29Sandbox` is actually BC v29,
-  which would make the 28.4 symbols downlevel for it (SC-11). *(awaiting: AJ)*
+- **Step 09 exit gate unmet** — AJ published `1.2.0.1` to `v29Sandbox`, but the green-team /
+  red-team / live permission verification were skipped by AJ's instruction. Never established
+  either way: whether the 4 custom API pages are actually discoverable/installed there (neither
+  keyword nor semantic `bc_actions_search` found them before the step was cut short), and
+  whether `v29Sandbox` is really BC v29, which would make the 28.4 symbols downlevel (SC-11).
+  *(awaiting: AJ)*
+- **preflight rule gap (10-02)** — `preflight.py` has no rule requiring `DataClassification` on
+  `tableextension` fields; TAB-01 only checks table-level. Adding one would stop that class of
+  gap recurring. Not done — deliberately not scope-crept into the review. *(awaiting: AJ)*
 - **09F-14 table placement** — "License Key" (Text80) was placed on `ocpf IP Entitlement`
   because the request didn't name a table; reasoned as the per-customer register, not the
   catalog tables. Confirm this is right, or move it. *(awaiting: AJ)*
@@ -107,6 +115,12 @@ raises or owns a decision.*
 - 2026-09-05 — Version `1.2.0.0` → `1.2.0.1` (Revision — corrective fix to an already-shipped
   feature, no new capability). Confirmed by AJ. `out/IP_Tracking_1.2.0.1.app`; all four packages
   present.
+- 2026-09-05 — Step 09 remainder skipped by AJ's instruction after live API discovery came up
+  empty; exit gate left unmet, logged as a deviation rather than quietly closed.
+- 2026-09-05 — Step 10 Code Review complete (`CodeReview.md`): 12 dimensions scanned, 10 clean,
+  2 scan hits dismissed as false positives, 2 real findings fixed — 10-01 (catalog pages missing
+  the `"No."` column, late-batch drift) and 10-02 (Item extension field had no
+  `DataClassification`, the app's only unclassified field).
 
 ## Next
 

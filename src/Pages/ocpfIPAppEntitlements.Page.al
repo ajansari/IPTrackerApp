@@ -13,6 +13,12 @@ page 80328 "ocpf IP App Entitlements"
         {
             repeater(Group)
             {
+                field("No."; Rec."No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the IP Entitlement number.';
+                    Editable = false;
+                }
                 field("IP App Code"; Rec."IP App Code")
                 {
                     ApplicationArea = All;

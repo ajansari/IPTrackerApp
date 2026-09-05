@@ -13,6 +13,12 @@ page 80329 "ocpf Customer Entitlements"
         {
             repeater(Group)
             {
+                field("No."; Rec."No.")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the IP Entitlement number.';
+                    Editable = false;
+                }
                 field("Customer No."; Rec."Customer No.")
                 {
                     ApplicationArea = All;

@@ -606,6 +606,67 @@ for the fix, not new user-facing capability — matches our policy's Revision de
 6 pre-accepted info. All four packages (`1.0.0.0`, `1.1.0.0`, `1.2.0.0`, `1.2.0.1`) confirmed
 present in `out/` — none deleted.
 
+## Step 09 — remainder skipped by instruction (deviation, logged per Operating Rule 7)
+
+**What happened:** AJ published `1.2.0.1` to `v29Sandbox` and asked to proceed with Step 09's
+remaining to-dos. Live testing was started via the BC MCP tools: `list_companies` returned
+`CRONUS USA, Inc.` (default) and `My Company`; `bc_actions_search` was then run in both keyword
+and semantic modes for the app's custom API entities. **Neither mode surfaced any of the four
+custom API pages (80315–80318)** — only unrelated standard Base App actions matched. Before
+concluding anything about the API surface, the next step was to check installation state via
+the standard Extension Management list (`List_Extensions_PAG30002`) — at which point AJ
+interrupted and instructed: skip the remainder of Step 09, move to Step 10.
+**Status: Step 09 is NOT complete.** Not done: green-team tests (`$metadata`, collection read,
+read by `SystemId`, create, update), red-team tests (invalid field, invalid key, delete a parent
+with dependents, missing-permission call), and live permission-set verification. The unresolved
+question of whether the custom APIs are actually discoverable/installed in that environment is
+also still open — it was never established either way.
+**Decision by:** AJ, explicitly. **Not an agent judgment call.**
+**Files affected:** none.
+**Updated:** neither TDD nor FRD — no design change; Step 09's exit gate simply remains unmet.
+
+## Step 10 — Code Review complete (2 findings, both fixed)
+
+Full record: `docs/CodeReview.md`. Twelve dimensions scanned across all 32 objects by executed
+scans (not a read-through): dead code, `Rec.` prefix, duplicate/unused `using`, duplicate field
+exposure, ToolTip consistency, obsolete references, required metadata, `DelayedInsert`/`Editable`
+mutability, `Error()` label usage, permission-set completeness, and cross-batch template drift.
+Ten came back clean. Two scan hits were investigated and dismissed as false positives (documented
+in CodeReview §3 rather than silently dropped).
+
+## Issue 10-01 — Late-batch drift: catalog pages omitted the `"No."` column
+**Problem:** The general Entitlements list (80313) and Card (80314) show the No.-series `"No."`;
+the two catalog pages added later in 09F-13 (80328/80329) did not — so a user creating an
+entitlement inline from the IP App or Customer catalog couldn't see or reference the number just
+assigned to it.
+**Root cause:** The catalog pages were written fresh against the *cross-reference* requirement
+rather than derived from the existing list's column set — classic late-batch drift. Invisible to
+the compiler and to every pre-flight rule; only visible by diffing the batches against each other,
+which is exactly Step 10's job.
+**Resolution:** Added `"No."` (`Editable = false`, ToolTip identical to its use elsewhere) as the
+first column on both 80328 and 80329.
+**Files affected:** `src/Pages/ocpfIPAppEntitlements.Page.al`, `src/Pages/ocpfCustomerEntitlements.Page.al`.
+**Updated:** TDD (§8.1 column lists) — yes.
+
+## Issue 10-02 — Item extension field carried no `DataClassification`
+**Problem:** `tableextension 80323 "ocpf Item"`'s `"IP App"` field declared `Caption`, `ToolTip`
+and `TableRelation` but no `DataClassification`, so it defaulted to `ToBeClassified` — the only
+unclassified field in the app.
+**Root cause:** Every other field in this app inherits `CustomerContent` from a **table-level**
+declaration on our own tables. A field added to *Microsoft's* `Item` table inherits nothing from
+ours. Nothing caught it: valid AL (compiler and all three analyzers silent), and `preflight.py`'s
+TAB-01 checks table-level `DataClassification` and doesn't run against `tableextension` objects
+at all.
+**Resolution:** `DataClassification = CustomerContent;` added to the field.
+**Files affected:** `src/TableExtensions/ocpfItem.TableExt.al`.
+**Updated:** TDD (§8.3) — yes.
+**Rule-level follow-up (not yet done):** `preflight.py` could gain a rule requiring
+`DataClassification` on every `tableextension` field, so this class of gap can't recur. Left as a
+deliberate note rather than scope-creeping the review — raised in `ProjectMemory.md`'s open items.
+
+**Verification after both fixes:** `scripts/build.sh` → 32 files, pre-flight 0 failures, compile
+0 errors / 0 warnings, 6 pre-accepted info.
+
 ---
 
 ## Batch deviations

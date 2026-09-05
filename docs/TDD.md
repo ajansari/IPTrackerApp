@@ -554,8 +554,8 @@ otherwise) had its now-unnecessary `OnNewRecord` removed — it's no longer reac
 | 80319 | *(table, not a page)* | | | |
 | 80320 | "ocpf IP App Editions Part" | ListPart | "ocpf IP App Edition" | Columns: Edition Code, Description — **Unit Price removed (09F-04)** |
 | 80321 | "ocpf IP App Prices Part" | ListPart | "ocpf IP App Price" | Unchanged except rename. Columns: Edition Code, Billing Period, Currency Code, Unit Price |
-| 80328 | "ocpf IP App Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2 (revised fix).** Dedicated catalog page mirroring Base App's "Item Vendor Catalog" exactly. No `UsageCategory`, no `CardPageId` — reached only via `RunObject`, edited inline. `"IP App Code"` hidden (`Visible = false`, implied by context). Columns: Customer No., Customer Name, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"IP App Code"` from `Rec.GetFilter` (defense-in-depth) |
-| 80329 | "ocpf Customer Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2.** Same pattern, mirrored for the Customer direction. `"Customer No."` hidden. Columns: IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"Customer No."` |
+| 80328 | "ocpf IP App Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2 (revised fix).** Dedicated catalog page mirroring Base App's "Item Vendor Catalog" exactly. No `UsageCategory`, no `CardPageId` — reached only via `RunObject`, edited inline. `"IP App Code"` hidden (`Visible = false`, implied by context). Columns: **No.** (`Editable = false`, added 10-01), Customer No., Customer Name, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"IP App Code"` from `Rec.GetFilter` (defense-in-depth) |
+| 80329 | "ocpf Customer Entitlements" | List | "ocpf IP Entitlement" | **New, 09F-13 §2.** Same pattern, mirrored for the Customer direction. `"Customer No."` hidden. Columns: **No.** (`Editable = false`, added 10-01), IP App Code, Edition Code, Status, Billing Period, Quantity, Date of Purchase, Expiration Date, Unit Price. `OnNewRecord` defaults `"Customer No."` |
 | 80322 | "ocpf IP App Setup" | Card | "ocpf IP App Setup" | **New (09F-07).** `UsageCategory = Administration`; `InsertAllowed = false`; `DeleteAllowed = false`. `OnOpenPage`: `if not Rec.Get() then begin Rec.Init(); Rec.Insert(); end;` — singleton, standard Setup-page pattern. Field: "IP Entitlement Nos." |
 
 Every page field: `ApplicationArea = All` + `ToolTip` (except the one conditionally-hidden field,
@@ -584,7 +584,7 @@ Field identifier map (camelCase; source field in quotes):
 
 | ID | Object | Extends | Notes |
 |---|---|---|---|
-| 80323 | `tableextension "ocpf Item"` | table 27 Item | Adds `"IP App"` (Code[10], `TableRelation = "ocpf IP App".Code`, optional — not every item has an IP association) |
+| 80323 | `tableextension "ocpf Item"` | table 27 Item | Adds `"IP App"` (Code[10], `TableRelation = "ocpf IP App".Code`, `DataClassification = CustomerContent` — added 10-01/10-02; an extension field on a Microsoft table inherits no table-level classification from this app; optional — not every item has an IP association) |
 | 80324 | `pageextension "ocpf Item Card"` | page 30 "Item Card" | `addlast(Item)` — adds the `"IP App"` field to the existing `Item` group |
 | 80325 | `pageextension "ocpf Item List"` | page 31 "Item List" | `addlast(Control1)` — the repeater's real internal name (confirmed against symbols, not assumed) |
 | 80326 | `pageextension "ocpf Customer Card"` | page 21 "Customer Card" | `addlast(Navigation)` — action `"IP Entitlements"`, `RunObject = page "ocpf Customer Entitlements"` (**retargeted 09F-13 §2** — was the general list 80313), `RunPageLink = "Customer No." = field("No.")`, `RunPageView = sorting("Customer No.")` |
