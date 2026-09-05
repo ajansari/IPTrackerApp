@@ -35,7 +35,7 @@ drifted since this file was last updated.
 | `ChangeLog.md` | Every decision, its reasoning, and every defect found + fixed |
 | `TestingFeedback.md` | Raw human testing input, verbatim, before triage |
 | `Roadmap.md` | Deferred/future work — not scheduled, just not lost |
-| `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs |
+| `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs. Each now carries a banner pointing back here |
 
 ## Open decisions awaiting sign-off
 
@@ -96,6 +96,9 @@ raises or owns a decision.*
 - 2026-09-05 — Version `1.1.0.0` → `1.2.0.0` (Minor). Self-corrected from an earlier Build/
   Revision suggestion — a new field is Minor per our own policy, a bundled bugfix doesn't
   downgrade that. Confirmed by AJ. `out/IP_Tracking_1.2.0.0.app`; all three packages present.
+- 2026-09-05 — AJ asked why `Packaging.md` still showed `DSW` (created 2026-09-04, before the
+  09F-05 rename, never updated — confirmed via git history, not a bug). Added a "superseded,
+  see this file" banner to all four point-in-time records rather than editing their history.
 
 ## Next
 

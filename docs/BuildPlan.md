@@ -2,6 +2,10 @@
 
 *Runbook phase: BUILD / Step 05 "Plan the Code". Date: 2026-09-04. Status: **complete — exit gate met, ready for Step 06**.*
 
+> **Point-in-time record — not a living spec.** This reflects project state as of the date
+> above (e.g. publisher/prefix may since have changed — see `ChangeLog.md`). For current
+> status, read `docs/ProjectMemory.md` first.
+
 **Inputs:** `docs/TDD.md` (§2 module grouping, §3 batch plan, §4.1 file naming), `docs/ObjectRegister.md`, `docs/SanityCheck.md`.
 **Outputs:** ordered batch plan (§2), project scaffold (§1), pre-flight validation script (§3), build command (§4).
 

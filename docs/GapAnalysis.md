@@ -3,6 +3,10 @@
 *Runbook phase: PROVE / Step 08 "Gap-Fit Test, Fidelity Validation". Date: 2026-09-04.*
 *Status: **complete — 1 gap found, classified Intentional; exit gate met.***
 
+> **Point-in-time record — not a living spec.** This reflects project state as of the date
+> above (e.g. publisher/prefix may since have changed — see `ChangeLog.md`). For current
+> status, read `docs/ProjectMemory.md` first.
+
 **Inputs:** `docs/FRD.md`, `docs/TDD.md`, the built AL in `src/` (23 objects, 4 commits), `docs/ChangeLog.md`.
 
 **Method — evidence, not recollection.** Every claim below was checked against the file on

@@ -538,6 +538,27 @@ downgrade that. Self-corrected before acting on it, not after.
 4 pre-accepted info. All three packages (`1.0.0.0`, `1.1.0.0`, `1.2.0.0`) confirmed present in
 `out/` — none deleted.
 
+## Superseded banner added to the four point-in-time records
+
+**Problem:** AJ opened `docs/Packaging.md` and asked why it still showed `DSW` as publisher —
+checked git history: created once (`08fac06`, 2026-09-04 23:32), never touched since, and the
+`DSW`→`OnlyCopilotFans` rename (09F-05) landed the *next day* (`ad228aa`, 2026-09-05 11:36). Not
+a bug — the "point-in-time record, not a living spec" policy for `SanityCheck.md`/
+`GapAnalysis.md`/`BuildPlan.md`/`Packaging.md` was established earlier this session — but the
+policy had a real gap: unlike `ChangeLog.md` (obviously a dated log), these four read as
+✔-checklists of current fact, not snapshots, so the historical framing is easy to miss.
+`Packaging.md`'s §5 "remaining work" list was also a second, now-stale copy of what
+`docs/ProjectMemory.md`'s "Open Decisions"/"Next" sections already track live — `ProjectMemory.md`
+didn't exist yet when Packaging.md was written.
+**Resolution:** Added a short blockquote banner at the top of all four documents pointing to
+`docs/ProjectMemory.md` for current status — content of the documents themselves left untouched
+(rewriting old records to match current state would falsify the history, same reasoning as
+leaving `ChangeLog.md`'s own historical `DSW` mentions alone).
+**Files affected:** `docs/SanityCheck.md`, `docs/GapAnalysis.md`, `docs/BuildPlan.md`,
+`docs/Packaging.md`.
+**Updated:** none of TDD/FRD — this is a documentation-hygiene fix, not a design change.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
+
 ---
 
 ## Batch deviations

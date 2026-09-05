@@ -2,6 +2,10 @@
 
 *Runbook phase: DESIGN / Step 04. Date: 2026-09-04. Status: **CLOSED — 0 blocking issues; all resolutions signed off and applied**.*
 
+> **Point-in-time record — not a living spec.** This reflects project state as of the date
+> above (e.g. publisher/prefix may since have changed — see `ChangeLog.md`). For current
+> status, read `docs/ProjectMemory.md` first.
+
 **Inputs:** `docs/FRD.md`, `docs/TDD.md`, `docs/ObjectRegister.md`, `app.json`, symbol files in `.alpackages`.
 
 **Method — this was an executed review, not a read-through.** Three evidence sources were used:

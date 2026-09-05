@@ -3,6 +3,12 @@
 *Runbook phase: PROVE / Step 09 "Package and Test the App" — **packaging only**. Date: 2026-09-04.*
 *Status: package built and verified. Publish + green-team/red-team tests are the remainder of Step 09 and require a live BC tenant — not run here.*
 
+> **Point-in-time record — not a living spec.** This predates the 2026-09-05 publisher/prefix
+> rename (`DSW`/`ipt` → `OnlyCopilotFans`/`ocpf`, see `ChangeLog.md` 09F-05) — every `DSW`
+> reference below is what was true on 2026-09-04, not current. §5's "remaining work" list is
+> also superseded by `docs/ProjectMemory.md`'s "Open Decisions"/"Next" sections, which are kept
+> current. Read `docs/ProjectMemory.md` first for anything you intend to act on.
+
 ## 1. Identity, runtime and dependencies confirmed against Parameter 1
 
 | Field | `app.json` | TDD §1 | Match |
