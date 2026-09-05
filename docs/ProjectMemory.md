@@ -141,6 +141,9 @@ raises or owns a decision.*
 - 2026-09-05 — AJ asked about the Mermaid schema; testing it revealed it **never rendered** —
   `PK_FK` isn't valid Mermaid. Fixed to `PK,FK` and verified by actually rendering (164 KB SVG,
   all 9 entities). Runbook Step 12 now requires rendering a diagram before shipping it.
+- 2026-09-05 — Project folder renamed `ANZProject` → `IPTrackerApp` (folder only; the extension,
+  publisher and prefix are unchanged). Git, the scripts and this file travelled automatically;
+  Claude Code's external memory dir is keyed to the absolute path and had to be re-keyed by hand.
 
 ## Next
 

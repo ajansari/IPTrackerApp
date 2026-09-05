@@ -18,7 +18,7 @@ suffix in the file-naming convention (TDD §4.1), which keeps `iptIPApp.Table.al
 without a second rule to remember.
 
 ```
-ANZProject/
+IPTrackerApp/                   (folder renamed from ANZProject, 2026-09-05)
 ├── app.json                    runtime 17.0, platform/application 28.0.0.0,
 │                               idRanges 80300-80339, features ["NoImplicitWith"]
 ├── .gitignore                  out/, *.app (except .alpackages), symbol cache, .DS_Store

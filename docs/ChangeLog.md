@@ -782,5 +782,33 @@ prove it parses; never ship one you have not seen render* — with the command a
 
 ---
 
+## Project folder renamed: `ANZProject` → `IPTrackerApp` (2026-09-05)
+
+**Requested by AJ.** Repository folder only — **no change to the extension itself**: `app.json`'s
+`name` stays `IP Tracking`, publisher stays `OnlyCopilotFans`, prefix stays `ocpf`, and no object
+was touched. Nothing about the built app differs.
+
+**What survived automatically:**
+- **Git** — history, branches and all 20 commits move with the folder; `.git` lives inside it.
+- **The build toolchain** — `build.sh`, `preflight.py` and `extract_asbuilt.py` all derive their
+  root from `BASH_SOURCE`/`__file__` rather than an absolute path, so they needed no edit.
+  Verified after the move: 0 errors, 0 warnings, 6 pre-accepted info.
+- **`docs/ProjectMemory.md`** — being in-repo, it travelled with the folder. This rename is a live
+  demonstration of why the runbook requires project memory to live in the repo rather than in an
+  agent's own store (see "Project Memory" under ALL ALONG).
+
+**What did *not* survive automatically, and had to be moved by hand:**
+- **Claude Code's external memory directory** is keyed to the project's *absolute path*
+  (`~/.claude/projects/-Users-ajansari-Documents-AL-ANZProject`). A folder rename orphans it —
+  the agent would look under the new key and find nothing. Re-keyed to
+  `-Users-ajansari-Documents-AL-IPTrackerApp`, and the path named inside the note updated.
+  Exactly the fragility that motivated making `ProjectMemory.md` the authoritative record.
+
+**Files affected:** `docs/BuildPlan.md` (folder tree root label — the only in-repo reference to
+the old name; historical *decisions* in the point-in-time docs were left untouched as always).
+**Verification:** `git log` intact; `scripts/build.sh` → 0 errors, 0 warnings from the new path.
+
+---
+
 ## Batch deviations
 *(none — see individual batch/issue entries above; every deviation is logged at the point it occurred)*
