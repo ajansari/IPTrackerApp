@@ -592,6 +592,20 @@ its now-unnecessary `OnNewRecord` was removed since it's no longer a `RunPageLin
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, 6 pre-accepted info (2 new `AW0006`
 on the catalog pages — expected, they have no `UsageCategory`, matching Base App's own pages).
 
+## Version 1.2.0.0 → 1.2.0.1 (Revision) — corrective fix, no new capability
+
+**Proposed:** Revision, not Minor. Reasoning: the cross-reference navigation feature itself
+already shipped (counted in the 1.2.0.0 Minor bump); this corrects a defect in it discovered
+during AJ's own testing of that package. The two new page objects are implementation vehicles
+for the fix, not new user-facing capability — matches our policy's Revision definition exactly:
+"a small correction or hotfix discovered while testing a specific package, with no new features."
+**Confirmed by AJ.**
+**Resolution:** `app.json` `version`: `1.2.0.0` → `1.2.0.1`. Repackaged.
+**Files affected:** `app.json`.
+**Verification:** `scripts/build.sh` → `out/IP_Tracking_1.2.0.1.app`; 0 errors, 0 warnings, same
+6 pre-accepted info. All four packages (`1.0.0.0`, `1.1.0.0`, `1.2.0.0`, `1.2.0.1`) confirmed
+present in `out/` — none deleted.
+
 ---
 
 ## Batch deviations

@@ -13,10 +13,11 @@ yet published to a live tenant). Two testing-feedback rounds applied on top of B
 
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
 runtime 17.0, ID range 80300–80339 (32 used, 8 free). Dependency on Business Foundation
-(28.4.53241.53312) for No. Series. **Version: `1.2.0.0`** (Minor bumps: `1.0.0.0`→`1.1.0.0`
-after the first 09F batch, `1.1.0.0`→`1.2.0.0` after 09F-13/09F-14 — see ChangeLog). Packages in
-`out/` (never deleted): `IP_Tracking_1.0.0.0.app`, `IP_Tracking_1.1.0.0.app`,
-`IP_Tracking_1.2.0.0.app`.
+(28.4.53241.53312) for No. Series. **Version: `1.2.0.1`** (Minor `1.0.0.0`→`1.1.0.0` after the
+first 09F batch, Minor `1.1.0.0`→`1.2.0.0` after 09F-13/09F-14, Revision `1.2.0.0`→`1.2.0.1`
+after 09F-13's corrective fix — see ChangeLog). Packages in `out/` (never deleted):
+`IP_Tracking_1.0.0.0.app`, `IP_Tracking_1.1.0.0.app`, `IP_Tracking_1.2.0.0.app`,
+`IP_Tracking_1.2.0.1.app`.
 
 **Object count:** 32 (3 enums, 5 tables, 10 UI pages, 2 catalog pages, 2 ListParts, 4 API pages,
 1 tableextension, 4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
@@ -103,6 +104,9 @@ raises or owns a decision.*
   "Item Vendor Catalog" symbols rather than guess again: the missing piece was no `CardPageId`
   + a hidden linking field on a *dedicated* target page, not a trigger on the shared list. Added
   pages 80328/80329, retargeted all four cross-reference actions. 32 objects now.
+- 2026-09-05 — Version `1.2.0.0` → `1.2.0.1` (Revision — corrective fix to an already-shipped
+  feature, no new capability). Confirmed by AJ. `out/IP_Tracking_1.2.0.1.app`; all four packages
+  present.
 
 ## Next
 
