@@ -13,5 +13,9 @@ scripts/.asbuilt.json
 .snapshots/
 .DS_Store
 
+# Local editor settings and helper scripts
+.vscode/
+scripts/
+
 # The BC Appl Build Routine Agent
 BC_App_Build_Routine_Agent.md
