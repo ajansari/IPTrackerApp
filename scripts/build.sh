@@ -26,11 +26,17 @@ AN="$ALEXT/bin/Analyzers"
 echo "== pre-flight =="
 python3 "$ROOT/scripts/preflight.py" "$@" || { echo "BUILD ABORTED: pre-flight failed."; exit 1; }
 
+# Package filename = <AppName, spaces -> underscores>_<Version>.app — read from app.json,
+# never hardcoded (Operating Rule 1). E.g. "IP Tracking" 1.0.0.0 -> IP_Tracking_1.0.0.0.app
+APP_NAME=$(python3 -c "import json; print(json.load(open('$ROOT/app.json'))['name'].replace(' ', '_'))")
+APP_VERSION=$(python3 -c "import json; print(json.load(open('$ROOT/app.json'))['version'])")
+PACKAGE_FILE="${APP_NAME}_${APP_VERSION}.app"
+
 echo
 echo "== compile (CodeCop + UICop + PerTenantExtensionCop) =="
 mkdir -p "$OUT"
 LOG="$OUT/build.log"
-"$ALC" /project:"$ROOT" /packagecachepath:"$ROOT/.alpackages" /out:"$OUT/app.app" \
+"$ALC" /project:"$ROOT" /packagecachepath:"$ROOT/.alpackages" /out:"$OUT/$PACKAGE_FILE" \
     /analyzer:"$AN/Microsoft.Dynamics.Nav.CodeCop.dll" \
     /analyzer:"$AN/Microsoft.Dynamics.Nav.UICop.dll" \
     /analyzer:"$AN/Microsoft.Dynamics.Nav.PerTenantExtensionCop.dll" 2>&1 | tee "$LOG"
@@ -45,4 +51,4 @@ if (( ERRORS > 0 || WARNINGS > 0 )); then
     echo "GATE FAILED — zero errors and zero warnings are required before the next batch."
     exit 1
 fi
-echo "GATE PASSED — $OUT/app.app"
+echo "GATE PASSED — $OUT/$PACKAGE_FILE"

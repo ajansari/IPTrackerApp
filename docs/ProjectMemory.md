@@ -72,6 +72,10 @@ raises or owns a decision.*
 - 2026-09-05 — Runbook Step 01 also now collects Object ID ranges as an ask-confirm-loop
   (start ID, end ID, show range, confirm, "additional ranges? Y/N", repeat); §1.2's table
   restructured to hold any number of ranges, not just Primary + one optional Additional.
+- 2026-09-05 — Package naming fixed: `scripts/build.sh` now outputs
+  `<AppName>_<version>.app` (derived from `app.json`, e.g. `IP_Tracking_1.0.0.0.app`) instead of
+  a hardcoded `app.app`. New runbook policy for when to offer repackaging, how to size a version
+  bump, and pushing back on a premature ask for either.
 
 ## Next
 

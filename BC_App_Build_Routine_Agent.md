@@ -345,7 +345,11 @@ Classify every gap as **Intentional** (document the reasoning), **Oversight** (f
 **Inputs:** Clean-compiling extension; permission sets (if Parameter 1.2 = `Yes`).
 
 **Actions:**
-- Build the `.app` package. Confirm `app.json` identity, runtime, and dependencies match Part 1.
+- Build the `.app` package, named `<ExtensionName, spaces → underscores>_<version>.app` — e.g.
+  `IP_Tracking_1.0.0.0.app` — derived from `app.json` at build time, never hardcoded (see
+  "Packaging & Versioning" under ALL ALONG for the full policy, and for when to offer packaging
+  and when to bump the version — both apply throughout the project, not only here).
+- Confirm `app.json` identity, runtime, and dependencies match Part 1.
 - Publish to a BC sandbox tenant.
 - Run green-team (happy path) tests: `$metadata` returns the expected schema; read a collection; read a single record by `SystemId`; create a record on an editable endpoint; update a field; confirm a read-only endpoint rejects writes (Standards §12.1).
 - Run red-team (boundary) tests: write to a read-only endpoint; send a non-existent field; send an invalid key; delete a record with dependencies; call with missing permissions — confirm each fails *gracefully with a clean, actionable error* (Standards §12.1).
@@ -469,6 +473,43 @@ agent that opens this repo.
   duplicate its content. A fact that lives only in an agent's private memory and nowhere in
   `docs/ProjectMemory.md` or the other project documents does not count as recorded — the file
   in the repo is the one a different agent, a teammate, or a fresh clone can actually read.
+
+## Packaging & Versioning
+
+Packaging (Step 09's "build the `.app`") and version bumps recur throughout BUILD and PROVE —
+every batch or testing-feedback round that lands clean is a candidate moment, not just the one
+narrative pass through Step 09.
+
+**Package naming — fixed, not a judgment call.** Every package is named
+`<ExtensionName, spaces → underscores>_<version>.app` — read `name` and `version` from `app.json`
+at build time, never hardcoded in the build script or typed by hand. Example: extension name
+`IP Tracking`, version `1.0.0.0` → `IP_Tracking_1.0.0.0.app`.
+
+**Offer to (re-)package — use judgment on *when*, not *whether* to ask.** When a batch, a
+testing-feedback round, or a defect fix finishes compiling to 0 errors / 0 warnings and
+represents a meaningful, testable unit of change, ask whether to rebuild the package now. The
+right granularity is the same one that already governs a ChangeLog entry and its own commit — if
+the change was significant enough for those, it's significant enough to offer a fresh package
+for. Don't ask after every trivial or doc-only edit; don't silently skip asking after a real
+batch either.
+
+**Version bumps require a proposal and approval — never a silent edit to `app.json`.** Propose
+a specific bump with reasoning, then wait for confirmation before changing anything:
+- **Major** — a breaking or structural change (e.g. renaming the whole extension, removing
+  something a consumer could already be relying on). Rare, especially pre-release.
+- **Minor** — new features, fields, or objects added in a backward-compatible way. This is the
+  common case for a testing-feedback batch.
+- **Build** — a repackage of the same feature set with no new functionality — a re-verification
+  build, an environment change, or simply "package this again as-is."
+- **Revision** — a small correction or hotfix discovered while testing a specific package, with
+  no new features.
+
+**Push back on a premature ask — don't just comply.** If asked to package while known errors or
+an unfinished batch stand, or asked for a version bump that doesn't match the size of what
+actually changed (a one-field tweak billed as Major; a breaking change billed as a Revision),
+say so plainly and recommend the right action instead of silently doing what was literally
+asked. If the human insists anyway, get an explicit override and proceed — but the mismatch must
+be named first, not absorbed silently.
 
 ---
 

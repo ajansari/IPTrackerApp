@@ -433,6 +433,28 @@ Additional allocation 1..N (one row per further "yes"), no fixed limit.
 **Files affected:** `BC_App_Build_Routine_Agent.md` §01 Actions, §1.2 table + worked example.
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
 
+## Framework addition (2026-09-05, fifth pass) — package naming, packaging/versioning judgment
+
+**Problem:** `out/app.app` was a hardcoded, uninformative package filename. Nothing in the
+framework said when to *offer* rebuilding the package as work progresses, how to decide a
+version bump, or to push back on a premature ask for either.
+**Resolution:** New ALL ALONG section, "Packaging & Versioning":
+- **Naming, fixed:** `<ExtensionName, spaces → underscores>_<version>.app`, read from `app.json`
+  at build time — e.g. `IP_Tracking_1.0.0.0.app`. `scripts/build.sh` now derives `APP_NAME`/
+  `APP_VERSION` from `app.json` via `python3 -c "import json; ..."` rather than a fixed string.
+- **When to offer repackaging:** the same granularity that already warrants a ChangeLog entry
+  and its own commit — a batch, feedback round, or fix that compiles 0/0 and is a meaningful,
+  testable unit. Not every trivial edit.
+- **Version-bump policy** (Major/breaking, Minor/new features, Build/repackage-no-new-function,
+  Revision/hotfix) — always proposed with reasoning and confirmed before `app.json` changes,
+  never bumped silently.
+- **Pushback rule:** a premature packaging ask (known errors, unfinished batch) or a
+  disproportionate bump request must be named plainly, not silently complied with.
+**Files affected:** `BC_App_Build_Routine_Agent.md` (Step 09 Actions + new ALL ALONG section);
+`scripts/build.sh`.
+**Verification:** `scripts/build.sh` → produces `out/IP_Tracking_1.0.0.0.app`; 0 errors, 0
+warnings, unchanged diagnostics.
+
 ---
 
 ## Batch deviations
