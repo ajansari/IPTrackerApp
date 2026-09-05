@@ -542,4 +542,5 @@ be named first, not absorbed silently.
 
 ---
 
-*Routine derived from the NEW ANZ Agentic Dev Framework outline; rules and parameters from `AL_PTE_Development_Standards_UNIFIED.md` (AJ Ansari, Microsoft MVP, OnlyCopilotFans). Update this runbook when the framework or the standards change.*
+*Routine created by AJ Ansari, Microsoft MVP, OnlyCopilotFans. Update this runbook when the framework or the standards change.*
+
