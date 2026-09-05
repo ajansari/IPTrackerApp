@@ -22,9 +22,9 @@ after 09F-13's corrective fix — see ChangeLog). Packages in `out/` (never dele
 **Object count:** 32 (3 enums, 5 tables, 10 UI pages, 2 catalog pages, 2 ListParts, 4 API pages,
 1 tableextension, 4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
 
-**Build status:** `./scripts/build.sh` → 0 errors, 0 warnings, 4 pre-accepted info (`AW0006` on
-Card pages, SC-07). Verify this is still true before trusting anything below — it may have
-drifted since this file was last updated.
+**Build status:** `./scripts/build.sh` → 0 errors, 0 warnings, 6 pre-accepted info (`AW0006` on
+4 Card pages, SC-07, + 2 catalog pages with no `UsageCategory`, 09F-13). Verify this is still
+true before trusting anything below — it may have drifted since this file was last updated.
 
 ## Live documents — read these, not this file, for anything substantive
 
