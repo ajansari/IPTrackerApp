@@ -2,7 +2,7 @@
   "id": "8bf69fdd-4440-48d7-b7b4-7608ac2e9266",
   "name": "IP Tracking",
   "publisher": "OnlyCopilotFans",
-  "version": "1.1.0.0",
+  "version": "1.2.0.0",
   "brief": "Track licensed IP apps, editions, pricing and customer entitlements.",
   "description": "Per-tenant extension that records the company's intellectual-property software assets, their editions and prices, and which customers hold which app/edition. UI (List/Card) plus v1.0 API.",
   "privacyStatement": "",

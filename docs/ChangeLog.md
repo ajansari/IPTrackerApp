@@ -524,6 +524,20 @@ grid-appropriate. Flagged for confirmation since the table wasn't specified in t
 **Updated:** TDD (§7.4) and FRD (§7.4) — yes.
 **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, same 4 pre-accepted info.
 
+## Version 1.1.0.0 → 1.2.0.0 (Minor) — self-correction on the bump level
+
+**Proposed (then corrected):** Initially suggested Build or Revision for this batch (09F-13
+bugfix + 09F-14 new field), reasoning it was "mostly a bugfix." That was a misapplication of our
+own policy — "Packaging & Versioning" states plainly: "**Minor** — new features, **fields**, or
+objects added in a backward-compatible way." 09F-14 added a field; a bundled bugfix doesn't
+downgrade that. Self-corrected before acting on it, not after.
+**Confirmed by AJ** ("yes.") — to the corrected Minor bump.
+**Resolution:** `app.json` `version`: `1.1.0.0` → `1.2.0.0`. Repackaged.
+**Files affected:** `app.json`.
+**Verification:** `scripts/build.sh` → `out/IP_Tracking_1.2.0.0.app`; 0 errors, 0 warnings, same
+4 pre-accepted info. All three packages (`1.0.0.0`, `1.1.0.0`, `1.2.0.0`) confirmed present in
+`out/` — none deleted.
+
 ---
 
 ## Batch deviations

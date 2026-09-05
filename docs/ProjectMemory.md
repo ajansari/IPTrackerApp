@@ -13,10 +13,10 @@ yet published to a live tenant). Two testing-feedback rounds applied on top of B
 
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
 runtime 17.0, ID range 80300–80339 (28 used, 12 free). Dependency on Business Foundation
-(28.4.53241.53312) for No. Series. **Version: `1.1.0.0`** (bumped from `1.0.0.0`, Minor, after
-the 09F feedback batch — see ChangeLog). Packages in `out/` (never deleted — see the
-"Packaging & Versioning" rule and the incident logged in ChangeLog): `IP_Tracking_1.0.0.0.app`,
-`IP_Tracking_1.1.0.0.app`.
+(28.4.53241.53312) for No. Series. **Version: `1.2.0.0`** (Minor bumps: `1.0.0.0`→`1.1.0.0`
+after the first 09F batch, `1.1.0.0`→`1.2.0.0` after 09F-13/09F-14 — see ChangeLog). Packages in
+`out/` (never deleted): `IP_Tracking_1.0.0.0.app`, `IP_Tracking_1.1.0.0.app`,
+`IP_Tracking_1.2.0.0.app`.
 
 **Object count:** 30 (3 enums, 5 tables, 9 UI pages, 2 ListParts, 4 API pages, 1 tableextension,
 4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
@@ -93,6 +93,9 @@ raises or owns a decision.*
   either cross-reference action fell outside its own filter — `RunPageLink` doesn't default new
   records, only filters; fixed via `OnNewRecord`, rule R-5); added `"License Key"` (Text80) to
   `ocpf IP Entitlement`; added Roadmap R-4 (License Key Generator, idea only).
+- 2026-09-05 — Version `1.1.0.0` → `1.2.0.0` (Minor). Self-corrected from an earlier Build/
+  Revision suggestion — a new field is Minor per our own policy, a bundled bugfix doesn't
+  downgrade that. Confirmed by AJ. `out/IP_Tracking_1.2.0.0.app`; all three packages present.
 
 ## Next
 
