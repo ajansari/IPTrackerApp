@@ -418,6 +418,21 @@ it actually says — the same discipline this framework has been built with thro
 No ChangeLog issue number — process improvements to the framework, not a deviation from this
 app's FRD/TDD. **Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged.
 
+## Framework addition (2026-09-05, fourth pass) — Object ID range collected as a loop
+
+**Problem:** AJ had two more kickoff-question additions in mind and forgot to include them
+earlier: (1) Object ID ranges (Parameter 1.2) should be asked the same way as the five identity
+questions — directly, not inferred — but as a *loop* rather than a single question, since a
+project can have more than one range. (2) — folded into (1); AJ's message described one flow.
+**Resolution:** Added to Step 01: for each range, ask the starting Object ID, ask the ending
+Object ID, show the resulting range and its size, ask the human to confirm it, then ask "are
+there additional ranges?" — repeating for every "yes" until "no." §1.2's table was restructured
+to match: it previously had a fixed shape (one Primary row + at most one optional Additional
+row), which couldn't represent more than two ranges. Now: Primary (first confirmed range) +
+Additional allocation 1..N (one row per further "yes"), no fixed limit.
+**Files affected:** `BC_App_Build_Routine_Agent.md` §01 Actions, §1.2 table + worked example.
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, unchanged (doc-only change).
+
 ---
 
 ## Batch deviations

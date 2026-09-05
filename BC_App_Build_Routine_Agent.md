@@ -80,6 +80,19 @@ Do not infer these from context under time pressure (an email domain, a guess at
 that produces exactly the kind of full-project rename this framework has already had to do once
 on a real project, after the inferred publisher and prefix turned out to be wrong.
 
+**Then collect Object ID ranges (§1.2) the same way — as a loop, not a single question,** since
+there can be more than one range:
+
+1. Ask for the starting Object ID.
+2. Ask for the ending Object ID.
+3. Show the resulting range and its size (e.g. "80300–80339 — 40 IDs") and ask the human to
+   confirm it.
+4. Ask: "Are there additional ranges?" (Y/N).
+5. If yes, repeat steps 1–4 for the next range. If no, stop — every confirmed range is final.
+
+The first confirmed range is the Primary allocation; every one after it is an Additional
+allocation — there can be more than one.
+
 ### 1.1 Extension Identity
 
 | Parameter | Placeholder | Guidance & Example |
@@ -115,10 +128,13 @@ on a real project, after the inferred publisher and prefix turned out to be wron
 
 ### 1.2 Object ID Allocation
 
+Collected as the loop described above — one row per confirmed range, in the order confirmed:
+
 | Block | From | To | Notes |
 |---|---|---|---|
-| **Primary allocation** | `<fromObjectId>` | `<toObjectId>` | One contiguous block for the main scope. |
-| **Additional allocation** *(optional)* | `<additionalFrom>` | `<additionalTo>` | Populate only if an extra range is needed. |
+| **Primary allocation** | `<fromObjectId>` | `<toObjectId>` | The first range confirmed; the main scope. |
+| **Additional allocation 1** *(if any)* | `<additionalFrom1>` | `<additionalTo1>` | Second confirmed range, if the human said yes to "additional ranges?" |
+| **Additional allocation N** *(if any)* | … | … | Repeat one row per further "yes" — there is no fixed limit. |
 
 | Parameter | Value | Guidance |
 |---|---|---|
@@ -126,7 +142,10 @@ on a real project, after the inferred publisher and prefix turned out to be wron
 
 > **Rule:** Never use object IDs outside the allocated ranges. Maintain the object register as a separate project artifact. If `Permission Sets required = Yes`, plan them before code generation.
 
-**Worked example:** Primary `90800` → `90999`; Additional blank; Permission Sets required = `Yes`.
+**Worked example** (the loop ran twice): starting ID `90800`, ending ID `90899` → shown as
+"90800–90899 — 100 IDs," confirmed → "additional ranges?" → Yes → starting ID `91500`, ending ID
+`91549` → shown as "91500–91549 — 50 IDs," confirmed → "additional ranges?" → No → stop. Final:
+Primary `90800`–`90899`; Additional allocation 1 `91500`–`91549`; Permission Sets required = `Yes`.
 
 ### 1.3 Naming & API Parameters
 
