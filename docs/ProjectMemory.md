@@ -14,7 +14,9 @@ yet published to a live tenant). Two testing-feedback rounds applied on top of B
 **Identity:** Publisher `OnlyCopilotFans`, prefix `ocpf`, namespace `OnlyCopilotFans.IPTracking`,
 runtime 17.0, ID range 80300–80339 (28 used, 12 free). Dependency on Business Foundation
 (28.4.53241.53312) for No. Series. **Version: `1.1.0.0`** (bumped from `1.0.0.0`, Minor, after
-the 09F feedback batch — see ChangeLog). Latest package: `out/IP_Tracking_1.1.0.0.app`.
+the 09F feedback batch — see ChangeLog). Packages in `out/` (never deleted — see the
+"Packaging & Versioning" rule and the incident logged in ChangeLog): `IP_Tracking_1.0.0.0.app`,
+`IP_Tracking_1.1.0.0.app`.
 
 **Object count:** 30 (3 enums, 5 tables, 9 UI pages, 2 ListParts, 4 API pages, 1 tableextension,
 4 pageextensions, 2 permission sets). Full list: `ObjectRegister.md`.
@@ -79,6 +81,11 @@ raises or owns a decision.*
   bump, and pushing back on a premature ask for either.
 - 2026-09-05 — First repackage under the new policy: version `1.0.0.0` → `1.1.0.0` (Minor,
   proposed with reasoning, confirmed by AJ). `out/IP_Tracking_1.1.0.0.app`, 0 errors/0 warnings.
+- 2026-09-05 — Incident: a manual `rm -f out/*.app` before both builds above deleted the
+  1.0.0.0 package (not a `build.sh` defect — confirmed the script never deletes anything).
+  Recovered by rebuilding from the exact prior source state, not a true undelete (`out/` isn't
+  git-tracked; `rm` doesn't use Trash). Runbook gained an explicit "never delete a previous
+  package" rule citing this incident.
 
 ## Next
 

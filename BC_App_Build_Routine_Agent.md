@@ -485,6 +485,18 @@ narrative pass through Step 09.
 at build time, never hardcoded in the build script or typed by hand. Example: extension name
 `IP Tracking`, version `1.0.0.0` → `IP_Tracking_1.0.0.0.app`.
 
+**Never delete a previous package. NEVER.** Every repackage writes a new, uniquely-named file
+next to the old ones — it does not replace, overwrite, or "clean up" anything already in the
+output folder, even one that looks superseded by a newer version. This applies to the build
+script itself and to the agent running it: no `rm`, no "let me tidy this up first," not even as
+a seemingly-harmless pre-build habit. On a real project this was violated exactly that way — a
+manual `rm -f out/*.app` run *before* the build, purely out of habit, deleted the previous
+version's package. It was recovered only because the output folder isn't git-tracked but the
+*source* is: the exact prior commit was checked out, rebuilt, and the file regenerated —
+functionally identical, not a true undelete. That recovery path will not always exist. Pruning
+old packages, if it ever happens, is a decision the human makes explicitly, never an automatic
+or "helpful" action by the agent.
+
 **Offer to (re-)package — use judgment on *when*, not *whether* to ask.** When a batch, a
 testing-feedback round, or a defect fix finishes compiling to 0 errors / 0 warnings and
 represents a meaningful, testable unit of change, ask whether to rebuild the package now. The

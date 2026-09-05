@@ -470,6 +470,29 @@ publisher/prefix/namespace rename, the Item and Customer ties, the No. Series-dr
 **Verification:** `scripts/build.sh` → `out/IP_Tracking_1.1.0.0.app`, 0 errors, 0 warnings, same
 4 pre-accepted info.
 
+## Incident — previous package deleted; recovered by rebuild, not undelete
+
+**Problem:** Before both the 1.0.0.0 and 1.1.0.0 builds above, `rm -f out/*.app` was run
+manually as a pre-build habit — out of an instinct to "make sure we see the new file cleanly,"
+not because `scripts/build.sh` itself deletes anything (confirmed: it doesn't). This deleted
+`out/IP_Tracking_1.0.0.0.app`. AJ caught it and asked for the file back.
+**Root cause:** An agent habit, not a script defect. `out/` is git-ignored (a build artifact
+directory), so nothing lost there is recoverable from git history, and `rm` on macOS does not
+use the Trash — the original bytes are genuinely gone, permanently.
+**Resolution:** Recovered functionally, not literally: `app.json`'s version was temporarily set
+back to `1.0.0.0` (the only thing that had changed since that package was built), rebuilt to
+regenerate `out/IP_Tracking_1.0.0.0.app`, then restored to `1.1.0.0` and rebuilt again. `git
+diff` confirmed the working tree matched the committed `1.1.0.0` state exactly before and after.
+Both packages now sit in `out/`.
+**Generalized into the runbook (not just this project):** "Packaging & Versioning" now states
+**never delete a previous package** — not by the build script, not by the agent running it, not
+as a "tidying" habit before a build — citing this exact incident as the cautionary example, the
+same way Step 01's "ask, don't infer" rule cites the DSW/`ipt`→OnlyCopilotFans/`ocpf` rename.
+**Files affected:** none (no code change — `app.json` ended exactly where it started).
+**Updated:** `BC_App_Build_Routine_Agent.md` ("Packaging & Versioning") — yes.
+**Verification:** `scripts/build.sh` → both `out/IP_Tracking_1.0.0.0.app` and
+`out/IP_Tracking_1.1.0.0.app` present; 0 errors, 0 warnings.
+
 ---
 
 ## Batch deviations
