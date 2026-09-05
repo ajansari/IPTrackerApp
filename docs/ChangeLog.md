@@ -720,5 +720,44 @@ verification has been performed**. Dev Manager review: outstanding (AJ).
 
 ---
 
+## Step 12 correction + three framework rules (2026-09-05)
+
+**Problem:** AJ asked "I see a post-dev TDD but no post-dev FRD?" Checking Step 11's actual text
+confirmed there is deliberately no `PostDevFRD.md` — outputs are `PostDevTDD.md` plus an
+**updated `FRD.md` in place**. So that was followed correctly. But checking Step 12's text at the
+same time surfaced a **genuine miss**: its outputs list *four* documents — `Documentation.md`,
+`HumanUnitTestScript.md`, **user guide**, `Deployment.md` — and only three were produced. The user
+guide had been silently folded into `Documentation.md`, which is scoped as the integration/API
+reference for developers, a different audience entirely. Caught by AJ, not by me.
+
+**Resolutions:**
+1. **`docs/UserGuide.md` written** — the missing Step 12 deliverable. End-user Markdown: what the
+   app is for, the five screens, first-time setup, adding products/editions/prices, recording an
+   entitlement from either direction, the two self-filling fields explained, a "when something is
+   refused" table mapping each guard message to what to do, and who-can-do-what. No API content.
+2. **Runbook Step 12 tightened** so this can't recur: the action now names `UserGuide.md`
+   explicitly, states it is *a separate document from `Documentation.md` and must not be folded
+   into it*, spells out the audience difference, and the Outputs line says "Four documents — check
+   all four exist before claiming the step is complete."
+3. **Runbook Step 11 now explains the FRD/TDD asymmetry** rather than just stating the outputs —
+   why the TDD gets a new file (the plan-vs-built gap is information; the original is the artifact
+   the code came from) and the FRD is updated in place (one current answer; a stale second copy
+   misleads the next planner). It also now **requires a pointer to the pre-BUILD FRD** in the FRD's
+   own header, since that asymmetry's one real cost is discoverability.
+4. **`docs/FRD.md` gained that pointer** — `git show 3e32f4f:docs/FRD.md` for the pre-BUILD
+   baseline, plus how to list every revision.
+5. **New Operating Rule 6a — ask decisions in a selectable options box, not in prose.** AJ's
+   feedback: a decision written as a paragraph of chat reads like the agent finished and is idling,
+   so the project stalls waiting on an answer nobody realised was owed. The rule requires the
+   harness's interactive multiple-choice mechanism for *decisions*, recommended option first —
+   and explicitly forbids using it for ordinary progress (finishing a step, reporting a clean
+   compile), because over-using it makes it noise.
+
+**Files affected:** `docs/UserGuide.md` (new), `docs/FRD.md`, `BC_App_Build_Routine_Agent.md`
+(Operating Rules, Step 11, Step 12).
+**Verification:** `scripts/build.sh` → 0 errors, 0 warnings, 6 pre-accepted info (docs-only change).
+
+---
+
 ## Batch deviations
 *(none — see individual batch/issue entries above; every deviation is logged at the point it occurred)*

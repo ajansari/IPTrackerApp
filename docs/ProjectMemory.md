@@ -42,6 +42,7 @@ true before trusting anything below — it may have drifted since this file was 
 | `PostDevTDD.md` | **As-built** object truth — what actually exists. Beats `TDD.md` where they disagree |
 | `Documentation.md` | Consumer/integration API reference + Mermaid schema (generated from code) |
 | `HumanUnitTestScript.md` | 40-step manual test pass — **specification, not yet executed** |
+| `UserGuide.md` | End-user guide — how to actually use the app in BC |
 | `Deployment.md` | Admin install/permissions/upgrade/uninstall guide |
 | `CodeReview.md` | Step 10 findings — point-in-time record |
 | `SanityCheck.md`, `GapAnalysis.md`, `Packaging.md`, `BuildPlan.md` | Historical Step 04/05/08/09 records — point-in-time, not living specs. Each now carries a banner pointing back here |
@@ -132,6 +133,11 @@ raises or owns a decision.*
   (the Unit Price FlowField NFR, and Setup/number-series still listed as out of scope).
 - 2026-09-05 — Step 12: `Documentation.md` (API reference + Mermaid erDiagram, generated from
   code), `HumanUnitTestScript.md` (40 steps, not yet run), `Deployment.md` (closes GA-01).
+- 2026-09-05 — AJ caught a missed Step 12 deliverable: the **user guide** had been folded into
+  `Documentation.md`. Wrote `docs/UserGuide.md`; tightened runbook Step 12 so the two documents
+  can't be conflated again. Also enshrined: why there's no PostDevFRD (Step 11), a required
+  pre-BUILD FRD pointer, and new Operating Rule 6a (ask decisions via the selectable options box,
+  never buried in prose — but not for ordinary progress).
 
 ## Next
 

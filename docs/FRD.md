@@ -7,6 +7,11 @@ than the plan. The next planning session starts from this document, not from the
 For the object-level as-built truth see `PostDevTDD.md`; for why each thing changed, `ChangeLog.md`.*
 *Companion: `BC_App_Build_Routine_Agent.md`. Detailed rules: `AL_PTE_Development_Standards_UNIFIED.md` (not present in repo — inline runbook summaries used).*
 
+> **Pre-BUILD baseline:** this document is updated in place, so the original pre-BUILD version is
+> not kept as a separate file (see the runbook's Step 11 for why). It is preserved in git — read
+> it with `git show 3e32f4f:docs/FRD.md`, and `git log --follow -- docs/FRD.md` for every revision
+> in between. `ChangeLog.md` and `PostDevTDD.md` §4 explain what changed and why.
+
 ---
 
 ## 1. Purpose & scope
