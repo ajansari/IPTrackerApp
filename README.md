@@ -1,5 +1,7 @@
 # OnlyCopilotFans Intellectual Property Tracker for Business Central
 
+![OnlyCopilotFans Intellectual Property Tracker for Business Central](images/ocpf_IPTrackerForBC.jpg)
+
 A per-tenant extension (PTE) for Microsoft Dynamics 365 Business Central that records the
 intellectual-property software assets your company licenses out — each product, its editions and
 prices, and the register of which customer holds which product and edition.
